@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
-import { env } from "./env.config";
+import config from "./config";
 
-const URI = env.MONGODB_URI;
+const URI = config.MONGODB_URI;
 
 /**
  * Función que permite realizar una conexión a la Base de Datos de MongoDB
