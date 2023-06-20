@@ -12,12 +12,6 @@ import {
 } from "../types/request";
 import { IQuestionCategory } from "../interfaces/questionCategory.interface";
 
-/*
-interface Category {
-    getAll: (req: Request, res: Response) => Promise<void>;
-}
-*/
-
 /**
  * Permite realizar la consulta de una "Category" en la BD, a partir de un determinado :id, recibido a través del req.params
  *
