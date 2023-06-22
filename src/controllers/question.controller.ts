@@ -1,11 +1,6 @@
-import { Request, Response } from "express";
+import { Response } from "express";
 import { StatusCodes } from "http-status-codes";
-import {
-    IdParams,
-    TypedRequest,
-    TypedRequestBody,
-    TypedRequestParams,
-} from "../types/request";
+import { IdParams, TypedRequest } from "../types/request";
 import { isValidId } from "../libs/validObjectId";
 import { apiResponse } from "../libs/response.handle";
 import QuestionModel from "../models/question.model";
@@ -19,7 +14,7 @@ import { IQuestion } from "../interfaces/question.interface";
  * @returns la respuesta a la petición de una determinada Pregunta
  */
 const getQuestion = async (
-    req: TypedRequestParams<IdParams>,
+    req: TypedRequest<IQuestion, IdParams>,
     res: Response
 ) => {
     const { id } = req.params;
@@ -58,7 +53,10 @@ const getQuestion = async (
  * @param res respuesta a una determinada petición del cliente
  * @returns la respuesta a la petición de una determinada Pregunta
  */
-const getAll = async (_req: Request, res: Response) => {
+const getAll = async (
+    _req: TypedRequest<IQuestion, IdParams>,
+    res: Response
+) => {
     try {
         const questions = await QuestionModel.find({});
 
@@ -82,7 +80,10 @@ const getAll = async (_req: Request, res: Response) => {
  * @param res respuesta a una determinada petición del cliente
  * @returns la respuesta a la petición de una determinada Pregunta
  */
-const addQuestion = async (req: TypedRequestBody<IQuestion>, res: Response) => {
+const addQuestion = async (
+    req: TypedRequest<IQuestion, IdParams>,
+    res: Response
+) => {
     if (!req.body)
         return apiResponse(res, {
             status: StatusCodes.BAD_REQUEST,
@@ -183,13 +184,13 @@ const updateQuestion = async (
 
 /**
  * Permite eliminar una pregunta, dado un ID en req.params
- * 
+ *
  * @param req solicitud HTTP desde el cliente
  * @param res respuesta a una determinada petición del cliente
  * @returns la respuesta a la petición de una determinada Pregunta
  */
 const deleteQuestion = async (
-    req: TypedRequestParams<IdParams>,
+    req: TypedRequest<IQuestion, IdParams>,
     res: Response
 ) => {
     const { id } = req.params;

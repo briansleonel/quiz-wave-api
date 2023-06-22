@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import { Response } from "express";
 import { StatusCodes } from "http-status-codes";
 
 import QuestionCategoryModel from "../models/questionCategory.model";
@@ -7,8 +7,8 @@ import { isValidId } from "../libs/validObjectId";
 import {
     IdParams,
     TypedRequest,
-    TypedRequestBody,
-    TypedRequestParams,
+    //TypedRequestBody,
+    //TypedRequestParams,
 } from "../types/request";
 import { IQuestionCategory } from "../interfaces/questionCategory.interface";
 
@@ -20,7 +20,7 @@ import { IQuestionCategory } from "../interfaces/questionCategory.interface";
  * @returns la respuesta a la petición de una determinada Category
  */
 const getCategory = async (
-    req: TypedRequestParams<IdParams>,
+    req: TypedRequest<IQuestionCategory, IdParams>,
     res: Response
 ) => {
     const { id } = req.params;
@@ -67,7 +67,10 @@ const getCategory = async (
  * @param res respuesta a una determinada petición del cliente
  * @returns la respuesta a la petición. Si todo sale bien, devuelve todas las "Categories"
  */
-const getAll = async (_req: Request, res: Response) => {
+const getAll = async (
+    _req: TypedRequest<IQuestionCategory, IdParams>,
+    res: Response
+) => {
     try {
         const categories = await QuestionCategoryModel.find({});
         return apiResponse(res, {
@@ -92,7 +95,7 @@ const getAll = async (_req: Request, res: Response) => {
  * @returns la respuesta a la petición. Si todo sale bien, devuelve la categoría creada
  */
 const addCategory = async (
-    req: TypedRequestBody<IQuestionCategory>,
+    req: TypedRequest<IQuestionCategory, IdParams>,
     res: Response
 ) => {
     // Verifico que se envien los datos en el body
@@ -181,7 +184,7 @@ const updateCategory = async (
  * @returns la respuesta a la petición. Si todo sale bien, devuelve la categoría eliminada
  */
 const deleteCategory = async (
-    req: TypedRequestParams<IdParams>,
+    req: TypedRequest<IQuestionCategory, IdParams>,
     res: Response
 ) => {
     const { id } = req.params;

@@ -1,13 +1,14 @@
 import { Router } from "express";
 import userController from "../controllers/user.controller";
+import { authRequired } from "../middlewares/validateToken.middleware";
 
 const userRouter = Router();
 
-userRouter.get("/user", userController.getAll);
-userRouter.get("/user/:id", userController.getUser);
-userRouter.post("/user", userController.addUser);
-userRouter.put("/user/:id", userController.updateUser);
-userRouter.delete("/user/:id", userController.deleteUser);
+userRouter.get("/user", authRequired, userController.getAll);
+userRouter.get("/user/:id", authRequired, userController.getUser);
+userRouter.post("/user", authRequired, userController.addUser);
+userRouter.put("/user/:id",authRequired, userController.updateUser);
+userRouter.delete("/user/:id",authRequired, userController.deleteUser);
 
 export default userRouter;
 

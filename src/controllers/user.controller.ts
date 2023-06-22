@@ -1,12 +1,7 @@
-import { Request, Response } from "express";
+import { Response } from "express";
 import { StatusCodes } from "http-status-codes";
 
-import {
-    IdParams,
-    TypedRequest,
-    TypedRequestBody,
-    TypedRequestParams,
-} from "../types/request";
+import { IdParams, TypedRequest } from "../types/request";
 import { isValidId } from "../libs/validObjectId";
 import { apiResponse } from "../libs/response.handle";
 import UserModel from "../models/user.model";
@@ -19,7 +14,7 @@ import { IUser } from "../interfaces/user.interface";
  * @param res respuesta a una determinada petición del cliente
  * @returns la respuesta a la petición de una determinado Usuario
  */
-const getUser = async (req: TypedRequestParams<IdParams>, res: Response) => {
+const getUser = async (req: TypedRequest<IUser, IdParams>, res: Response) => {
     const { id } = req.params;
 
     // Verifico que el ID sea un tipo válido
@@ -57,7 +52,7 @@ const getUser = async (req: TypedRequestParams<IdParams>, res: Response) => {
  * @param res respuesta a una determinada petición del cliente
  * @returns la respuesta a la petición. SI todo sale bien devuelve los usuarios.
  */
-const getAll = async (_req: Request, res: Response) => {
+const getAll = async (_req: TypedRequest<IUser, IdParams>, res: Response) => {
     try {
         const users = await UserModel.find({});
 
@@ -81,7 +76,7 @@ const getAll = async (_req: Request, res: Response) => {
  * @param res respuesta a una determinada petición del cliente
  * @returns la respuesta a la petición
  */
-const addUser = async (req: TypedRequestBody<IUser>, res: Response) => {
+const addUser = async (req: TypedRequest<IUser, IdParams>, res: Response) => {
     if (!req.body)
         return apiResponse(res, {
             status: StatusCodes.BAD_REQUEST,
@@ -152,7 +147,10 @@ const updateUser = async (
         });
     }
 };
-const deleteUser = async (req: TypedRequestParams<IdParams>, res: Response) => {
+const deleteUser = async (
+    req: TypedRequest<IUser, IdParams>,
+    res: Response
+) => {
     const { id } = req.params;
     if (!isValidId(id))
         return apiResponse(res, {
