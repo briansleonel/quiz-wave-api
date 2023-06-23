@@ -2,7 +2,7 @@ import { StatusCodes } from "http-status-codes";
 
 /**
  * Interfaz para una Respuesta del servidor a una determinada Petición
- * 
+ *
  * @property status HTTP Status Code
  * @property data Datos que serán enviados al cliente
  * @property message Mensaje como respuesta a la petición
@@ -10,5 +10,5 @@ import { StatusCodes } from "http-status-codes";
 export interface APIResponse<I> {
     status: number;
     data?: I;
-    message: string;
+    message: string | Array<string>;
 }
