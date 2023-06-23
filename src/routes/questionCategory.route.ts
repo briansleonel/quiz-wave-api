@@ -1,6 +1,8 @@
 import { Router } from "express";
 import questionCategoryController from "../controllers/questionCategory.controller";
 import { authRequired } from "../middlewares/validateToken.middleware";
+import { validateSchema } from "../middlewares/validateSchema.middleware";
+import { categorySchema } from "../schemas/category.schema";
 
 const questionCategoryRouter = Router();
 
@@ -19,12 +21,14 @@ questionCategoryRouter.get(
 questionCategoryRouter.post(
     "/category",
     authRequired,
+    validateSchema(categorySchema),
     questionCategoryController.addCategory
 );
 
 questionCategoryRouter.put(
     "/category/:id",
     authRequired,
+    validateSchema(categorySchema),
     questionCategoryController.updateCategory
 );
 

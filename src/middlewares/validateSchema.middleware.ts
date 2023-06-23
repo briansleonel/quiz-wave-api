@@ -1,11 +1,12 @@
-import { NextFunction, Request, Response } from "express";
+import { NextFunction, Response } from "express";
 import { AnyZodObject, ZodError } from "zod";
 import { apiResponse } from "../libs/response.handle";
 import { StatusCodes } from "http-status-codes";
+import { IdParams, TypedRequest } from "../types/request";
 
 export const validateSchema =
-    (schema: AnyZodObject) =>
-    (req: Request, res: Response, next: NextFunction) => {
+    <T>(schema: AnyZodObject) =>
+    (req: TypedRequest<T, IdParams>, res: Response, next: NextFunction) => {
         try {
             schema.parse(req.body);
             next();
