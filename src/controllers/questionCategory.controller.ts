@@ -114,7 +114,7 @@ const addCategory = async (
         return apiResponse(res, {
             status: StatusCodes.CREATED,
             data: categorySaved,
-            message: "Categoría añadida",
+            message: "Categoría guardada",
         });
     } catch (err) {
         return apiResponse(res, {

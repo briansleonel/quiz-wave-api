@@ -58,7 +58,7 @@ const getAll = async (_req: TypedRequest<IUser, IdParams>, res: Response) => {
 
         return apiResponse(res, {
             status: StatusCodes.OK,
-            message: "Todos los usuario",
+            message: "Todos los usuarios",
             data: users,
         });
     } catch (err) {
@@ -91,7 +91,7 @@ const addUser = async (req: TypedRequest<IUser, IdParams>, res: Response) => {
         return apiResponse(res, {
             status: StatusCodes.CREATED,
             data: userSaved,
-            message: "Usuario añadido",
+            message: "Usuario guardado",
         });
     } catch (err) {
         return apiResponse(res, {

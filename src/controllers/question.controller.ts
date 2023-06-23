@@ -109,7 +109,7 @@ const addQuestion = async (
 
         return apiResponse(res, {
             status: StatusCodes.OK,
-            message: "Pregunta añadida",
+            message: "Pregunta guardada",
             data: questionSaved,
         });
     } catch (err) {
@@ -171,7 +171,7 @@ const updateQuestion = async (
 
         return apiResponse(res, {
             status: StatusCodes.OK,
-            message: "Pregunta guardada",
+            message: "Pregunta actualizada",
             data: questionUpdated,
         });
     } catch (err) {

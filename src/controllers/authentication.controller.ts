@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { TypedRequestBody } from "../types/request";
+import { IdParams, TypedRequest } from "../types/request";
 import { ILogin, IUser } from "../interfaces/user.interface";
 import UserModel from "../models/user.model";
 import { apiResponse } from "../libs/response.handle";
@@ -15,7 +15,7 @@ import { createAccessToken } from "../libs/jwt";
  * @param res respuesta a una determinada petición del cliente
  * @returns la respuesta a la petición
  */
-const login = async (req: TypedRequestBody<ILogin>, res: Response) => {
+const login = async (req: TypedRequest<ILogin, IdParams>, res: Response) => {
     const { username, password } = req.body;
 
     if (!username && !password)
@@ -89,7 +89,7 @@ const logout = async (_req: Request, res: Response) => {
  * @param res respuesta a una determinada petición del cliente
  * @returns la respuesta a la petición
  */
-const register = async (req: TypedRequestBody<IUser>, res: Response) => {
+const register = async (req: TypedRequest<IUser, IdParams>, res: Response) => {
     if (!req.body)
         return apiResponse(res, {
             status: StatusCodes.BAD_REQUEST,

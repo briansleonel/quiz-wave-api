@@ -1,6 +1,8 @@
 import { Router } from "express";
 import questionController from "../controllers/question.controller";
 import { authRequired } from "../middlewares/validateToken.middleware";
+import { validateSchema } from "../middlewares/validateSchema.middleware";
+import { questionSchema } from "../schemas/question.schema";
 
 const questionRouter = Router();
 
@@ -10,10 +12,16 @@ questionRouter.get(
     authRequired,
     questionController.getQuestion
 );
-questionRouter.post("/question", authRequired, questionController.addQuestion);
+questionRouter.post(
+    "/question",
+    authRequired,
+    validateSchema(questionSchema),
+    questionController.addQuestion
+);
 questionRouter.put(
     "/question/:id",
     authRequired,
+    validateSchema(questionSchema),
     questionController.updateQuestion
 );
 questionRouter.delete(
