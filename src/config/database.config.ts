@@ -9,6 +9,6 @@ const URI = config.MONGODB_URI;
 export function connectDatabase() {
     mongoose
         .connect(URI)
-        .then((_db) => console.log("Database is connected"))
+        .then((_db) => console.log("🟢 Database is connected"))
         .catch((error) => console.log(error));
 }

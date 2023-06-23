@@ -3,6 +3,9 @@ import { IUser } from "../interfaces/user.interface";
 import { isEmail } from "../libs/emailValidator";
 import { Role } from "../libs/role.enum";
 
+/**
+ * Permite representar un esquema de mongoose para un determinado "Usuario"
+ */
 const UserSchema = new Schema<IUser>(
     {
         username: {
@@ -65,6 +68,10 @@ const UserSchema = new Schema<IUser>(
     { timestamps: true }
 );
 
+
+/**
+ * Representa un modelo de mongoose para un "Usuario"
+ */
 const UserModel = model("User", UserSchema);
 
 export default UserModel;

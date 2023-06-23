@@ -9,5 +9,5 @@ const HOSTNAME = config.HOSTNAME;
 connectDatabase(); // Se realiza la conexión a la base de datos
 
 app.listen(PORT, HOSTNAME, () => {
-    console.log(`Server started http://${HOSTNAME}:${PORT}`);
+    console.log(`🌐 Server started: http://${HOSTNAME}:${PORT}`);
 });
