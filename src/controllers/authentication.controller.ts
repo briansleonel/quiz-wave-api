@@ -1,9 +1,10 @@
 import { Request, Response } from "express";
+import { StatusCodes } from "http-status-codes";
+import cookie from "cookie";
 import { IdParams, TypedRequest } from "../types/request";
 import { ILogin, IUser } from "../interfaces/user.interface";
 import UserModel from "../models/user.model";
 import { apiResponse } from "../libs/response.handle";
-import { StatusCodes } from "http-status-codes";
 import { comparePassword, encryptPassword } from "../libs/bcrypt";
 import { createAccessToken } from "../libs/jwt";
 
@@ -16,6 +17,8 @@ import { createAccessToken } from "../libs/jwt";
  * @returns la respuesta a la petición
  */
 const login = async (req: TypedRequest<ILogin, IdParams>, res: Response) => {
+    console.log(req.body);
+
     const { username, password } = req.body;
 
     if (!username && !password)
@@ -48,15 +51,21 @@ const login = async (req: TypedRequest<ILogin, IdParams>, res: Response) => {
             role: userFound.role,
         });
 
-        // Envió el cookie con el token
-        res.cookie("token", token);
-
         // Añadir token en el header
-        //res.header("authorization", token as string);
+        res.setHeader(
+            "Set-Cookie",
+            cookie.serialize("token", token as string, {
+                httpOnly: true,
+                secure: process.env.NODE_ENV !== "development",
+                sameSite: "strict",
+                maxAge: 60 * 60 * 24,
+                path: "/",
+            })
+        );
 
         return apiResponse(res, {
             status: StatusCodes.OK,
-            message: "Sesión iniciada",
+            message: "Ha iniciado sesión",
         });
     } catch (err) {
         return apiResponse(res, {
