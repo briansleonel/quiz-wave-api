@@ -68,15 +68,32 @@ const getCategory = async (
  * @returns la respuesta a la petición. Si todo sale bien, devuelve todas las "Categories"
  */
 const getAll = async (
-    _req: TypedRequest<IQuestionCategory, IdParams>,
+    req: TypedRequest<IQuestionCategory, IdParams>,
     res: Response
 ) => {
+    const query = {};
+    const options = {
+        page: req.query.page ? Number(req.query.page) : 1,
+        limit: req.query.limit ? Number(req.query.limit) : 5,
+    };
+
     try {
-        const categories = await QuestionCategoryModel.find({});
+        // Busco los datos y los pagino
+        const categories = await QuestionCategoryModel.paginate(query, options);
+
+        // excluyo los datos que no quiero enviar en el response
+        const { docs, offset, meta, totalDocs, ...restData } = categories;
+
+        console.log(restData);
+
         return apiResponse(res, {
             status: StatusCodes.OK,
-            data: categories,
-            message: "Todas las categorías",
+            data: categories.docs,
+            message: "Datos encontrados",
+            pagination: {
+                totalData: categories.totalDocs,
+                ...restData,
+            },
         });
     } catch (err) {
         return apiResponse(res, {

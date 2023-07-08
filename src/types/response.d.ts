@@ -1,4 +1,17 @@
-import { StatusCodes } from "http-status-codes";
+/**
+ * Interfaz que representa los datos de paginación de una determinada consulta a la BD
+ */
+export interface IPagination {
+    totalData: number;
+    limit: number;
+    totalPages: number;
+    page?: number;
+    pagingCounter: number;
+    hasPrevPage: boolean;
+    hasNextPage: boolean;
+    prevPage?: number | null;
+    nextPage?: number | null;
+}
 
 /**
  * Interfaz para una Respuesta del servidor a una determinada Petición
@@ -11,4 +24,5 @@ export interface APIResponse<I> {
     status: number;
     data?: I;
     message: string | Array<string>;
+    pagination?: IPagination;
 }
