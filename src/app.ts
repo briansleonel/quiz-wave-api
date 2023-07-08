@@ -16,7 +16,7 @@ app.use(morgan("dev")); // Hacemos uso del HTTP Request Logger con la configurac
 app.use(cookieParser()); // Permitir req.cookies se transofrmen a onjeto de js
 app.use(
     cors({
-        origin: "http://localhost:3000",
+        origin: "http://192.168.0.12:3000",
         credentials: true,
     })
 );

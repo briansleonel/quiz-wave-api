@@ -66,6 +66,10 @@ const login = async (req: TypedRequest<ILogin, IdParams>, res: Response) => {
         return apiResponse(res, {
             status: StatusCodes.OK,
             message: "Ha iniciado sesión",
+            data: {
+                _id: userFound._id,
+                role: userFound.role,
+            },
         });
     } catch (err) {
         return apiResponse(res, {
@@ -113,15 +117,36 @@ const register = async (req: TypedRequest<IUser, IdParams>, res: Response) => {
     try {
         const userSaved = await newUser.save();
 
+        // Creo el token de acceso para el usuario logueado
+        const token = await createAccessToken({
+            id: userSaved._id,
+            role: userSaved.role,
+        });
+
+        // Añadir token en el header
+        res.setHeader(
+            "Set-Cookie",
+            cookie.serialize("token", token as string, {
+                httpOnly: true,
+                secure: process.env.NODE_ENV !== "development",
+                sameSite: "strict",
+                maxAge: 60 * 60 * 24,
+                path: "/",
+            })
+        );
+
         return apiResponse(res, {
             status: StatusCodes.CREATED,
-            data: userSaved,
-            message: "Usuario añadido",
+            data: {
+                _id: userSaved._id,
+                role: userSaved.role,
+            },
+            message: "Se ha creado su cuenta",
         });
     } catch (err) {
         return apiResponse(res, {
             status: StatusCodes.INTERNAL_SERVER_ERROR,
-            message: err as string,
+            message: err instanceof Error ? err.message : (err as string),
         });
     }
 };
