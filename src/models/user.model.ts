@@ -1,7 +1,8 @@
-import { Schema, model } from "mongoose";
+import { Document, PaginateModel, Schema, model } from "mongoose";
 import { IUser } from "../interfaces/user.interface";
 import { isEmail } from "../libs/emailValidator";
 import { Role } from "../libs/role.enum";
+import paginate from "mongoose-paginate-v2";
 
 /**
  * Permite representar un esquema de mongoose para un determinado "Usuario"
@@ -68,10 +69,18 @@ const UserSchema = new Schema<IUser>(
     { timestamps: true }
 );
 
+// Agrego pligin para tener paginación de consulta de datos
+UserSchema.plugin(paginate);
+
+// interfaz representando el esquema como un documento de mongoose
+interface UserDocument extends Document, IUser {}
 
 /**
  * Representa un modelo de mongoose para un "Usuario"
  */
-const UserModel = model("User", UserSchema);
+const UserModel = model<UserDocument, PaginateModel<UserDocument>>(
+    "User",
+    UserSchema
+);
 
 export default UserModel;

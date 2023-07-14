@@ -52,14 +52,29 @@ const getUser = async (req: TypedRequest<IUser, IdParams>, res: Response) => {
  * @param res respuesta a una determinada petición del cliente
  * @returns la respuesta a la petición. SI todo sale bien devuelve los usuarios.
  */
-const getAll = async (_req: TypedRequest<IUser, IdParams>, res: Response) => {
+const getAll = async (req: TypedRequest<IUser, IdParams>, res: Response) => {
+    const query = {};
+    const options = {
+        page: req.query.page ? Number(req.query.page) : 1,
+        limit: req.query.limit ? Number(req.query.limit) : 10,
+    };
+
     try {
-        const users = await UserModel.find({});
+        //const users = await UserModel.find({});
+        // Busco los datos y los pagino
+        const users = await UserModel.paginate(query, options);
+
+        // excluyo los datos que no quiero enviar en el response
+        const { docs, offset, meta, totalDocs, ...restData } = users;
 
         return apiResponse(res, {
             status: StatusCodes.OK,
-            message: "Todos los usuarios",
-            data: users,
+            message: "Datos encontrados",
+            data: users.docs,
+            pagination: {
+                totalData: users.totalDocs,
+                ...restData,
+            },
         });
     } catch (err) {
         return apiResponse(res, {
