@@ -74,7 +74,7 @@ const getAll = async (
     const query = {};
     const options = {
         page: req.query.page ? Number(req.query.page) : 1,
-        limit: req.query.limit ? Number(req.query.limit) : 5,
+        limit: req.query.limit ? Number(req.query.limit) : 10,
     };
 
     try {
@@ -84,7 +84,7 @@ const getAll = async (
         // excluyo los datos que no quiero enviar en el response
         const { docs, offset, meta, totalDocs, ...restData } = categories;
 
-        console.log(restData);
+        //console.log(restData);
 
         return apiResponse(res, {
             status: StatusCodes.OK,

@@ -17,8 +17,6 @@ import { createAccessToken } from "../libs/jwt";
  * @returns la respuesta a la petición
  */
 const login = async (req: TypedRequest<ILogin, IdParams>, res: Response) => {
-    console.log(req.body);
-
     const { username, password } = req.body;
 
     if (!username && !password)
