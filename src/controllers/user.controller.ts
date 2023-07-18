@@ -6,6 +6,7 @@ import { isValidId } from "../libs/validObjectId";
 import { apiResponse } from "../libs/response.handle";
 import UserModel from "../models/user.model";
 import { IUser } from "../interfaces/user.interface";
+import { getQueryUserOr } from "../query/user.query";
 
 /**
  * Permite devolver un Usuario, de acuerdo a la coincidencia con algún ID
@@ -53,14 +54,14 @@ const getUser = async (req: TypedRequest<IUser, IdParams>, res: Response) => {
  * @returns la respuesta a la petición. SI todo sale bien devuelve los usuarios.
  */
 const getAll = async (req: TypedRequest<IUser, IdParams>, res: Response) => {
-    const query = {};
     const options = {
         page: req.query.page ? Number(req.query.page) : 1,
         limit: req.query.limit ? Number(req.query.limit) : 10,
     };
 
+    const query = getQueryUserOr(req);
+
     try {
-        //const users = await UserModel.find({});
         // Busco los datos y los pagino
         const users = await UserModel.paginate(query, options);
 
@@ -69,7 +70,7 @@ const getAll = async (req: TypedRequest<IUser, IdParams>, res: Response) => {
 
         return apiResponse(res, {
             status: StatusCodes.OK,
-            message: "Datos encontrados",
+            message: totalDocs > 0 ? "Datos encontrados" : "Sin datos",
             data: users.docs,
             pagination: {
                 totalData: users.totalDocs,
