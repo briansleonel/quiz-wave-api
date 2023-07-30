@@ -1,6 +1,5 @@
 import { Schema, model } from "mongoose";
 import { IQuestion } from "../interfaces/question.interface";
-import QuestionOptionsModel from "./questionOptions.model";
 import QuestionCategoryModel from "./questionCategory.model";
 import UserModel from "./user.model";
 
@@ -13,13 +12,14 @@ const QuestionSchema = new Schema<IQuestion>(
             type: String,
             required: [true, "La pregunta es requerida"],
         },
-        options: {
-            type: QuestionOptionsModel.schema,
-            ref: QuestionOptionsModel,
-            required: [true, "Las opciones son requeridas"],
-        },
+        options: [
+            {
+                type: String,
+                required: [true, "Las opciones son requeridas"],
+            },
+        ],
         correct: {
-            type: String,
+            type: Number,
             required: [true, "La respuesta correcta es requerida"],
         },
         category: {
@@ -36,7 +36,7 @@ const QuestionSchema = new Schema<IQuestion>(
         },
         description: {
             type: String,
-            required: [true, "La descripción es requerida"],
+            //required: [true, "La descripción es requerida"],
         },
         verified: {
             type: Boolean,
