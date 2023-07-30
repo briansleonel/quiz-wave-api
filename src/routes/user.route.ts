@@ -7,8 +7,13 @@ const userRouter = Router();
 userRouter.get("/user", authRequired, userController.getAll);
 userRouter.get("/user/:id", authRequired, userController.getUser);
 userRouter.post("/user", authRequired, userController.addUser);
-userRouter.put("/user/:id",authRequired, userController.updateUser);
-userRouter.delete("/user/:id",authRequired, userController.deleteUser);
+userRouter.put("/user/:id", authRequired, userController.updateUser);
+userRouter.delete("/user/:id", authRequired, userController.deleteUser);
+userRouter.put(
+    "/user/verified/:id",
+    authRequired,
+    userController.changeVerifiedUser
+);
 
 export default userRouter;
 

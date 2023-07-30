@@ -163,6 +163,51 @@ const updateUser = async (
         });
     }
 };
+
+const changeVerifiedUser = async (
+    req: TypedRequest<IUser, IdParams>,
+    res: Response
+) => {
+    const { id } = req.params;
+
+    // Verifico que el ID sea un ID de mongoose válido
+    if (!isValidId(id))
+        return apiResponse(res, {
+            status: StatusCodes.BAD_REQUEST,
+            message: "Id inválido",
+        });
+
+    try {
+        const userFound = await UserModel.findById(id);
+
+        if (!userFound)
+            return apiResponse(res, {
+                status: StatusCodes.NO_CONTENT,
+                message: "Usuario no encontrado",
+            });
+
+        const userChange = await UserModel.findByIdAndUpdate(
+            id,
+            { verified: !userFound?.verified },
+            {
+                new: true,
+            }
+        );
+
+        return apiResponse(res, {
+            status: StatusCodes.OK,
+            message: userChange?.verified
+                ? "Se ha verificado el usuario"
+                : "Se ha quitado la verificación del usuario",
+        });
+    } catch (err) {
+        return apiResponse(res, {
+            status: StatusCodes.INTERNAL_SERVER_ERROR,
+            message: err as string,
+        });
+    }
+};
+
 const deleteUser = async (
     req: TypedRequest<IUser, IdParams>,
     res: Response
@@ -202,6 +247,7 @@ const userController = {
     addUser,
     updateUser,
     deleteUser,
+    changeVerifiedUser,
 };
 
 export default userController;
