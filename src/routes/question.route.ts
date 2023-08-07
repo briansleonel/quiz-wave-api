@@ -30,4 +30,10 @@ questionRouter.delete(
     questionController.deleteQuestion
 );
 
+questionRouter.put(
+    "/question/verified/:id",
+    authRequired,
+    questionController.changeVerified
+);
+
 export default questionRouter;

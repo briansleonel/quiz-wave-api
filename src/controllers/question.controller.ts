@@ -5,6 +5,7 @@ import { isValidId } from "../libs/validObjectId";
 import { apiResponse } from "../libs/response.handle";
 import QuestionModel from "../models/question.model";
 import { IQuestion } from "../interfaces/question.interface";
+import { getQueryQuestionOr } from "../query/question.query";
 
 /**
  * Permite devolver una Pregunta, de acuerdo a la coincidencia con algún ID
@@ -26,7 +27,7 @@ const getQuestion = async (
         });
 
     try {
-        const questionFound = await QuestionModel.findById(id);
+        const questionFound = await QuestionModel.findById(id).populate("category");
         if (!questionFound)
             return apiResponse(res, {
                 status: StatusCodes.NO_CONTENT,
@@ -54,16 +55,34 @@ const getQuestion = async (
  * @returns la respuesta a la petición de una determinada Pregunta
  */
 const getAll = async (
-    _req: TypedRequest<IQuestion, IdParams>,
+    req: TypedRequest<IQuestion, IdParams>,
     res: Response
 ) => {
+    const options = {
+        page: req.query.page ? Number(req.query.page) : 1,
+        limit: req.query.limit ? Number(req.query.limit) : 10,
+    };
+
+    const query = getQueryQuestionOr(req);
+
     try {
-        const questions = await QuestionModel.find({});
+        // Busco los datos y los pagino
+        const questions = await QuestionModel.paginate(query, {
+            ...options,
+            populate: "category",
+        });
+
+        // excluyo los datos que no quiero enviar en el response
+        const { docs, offset, meta, totalDocs, ...restData } = questions;
 
         return apiResponse(res, {
             status: StatusCodes.OK,
-            message: "Todas las preguntas",
-            data: questions,
+            message: totalDocs > 0 ? "Datos encontrados" : "Sin datos",
+            data: questions.docs,
+            pagination: {
+                totalData: questions.totalDocs,
+                ...restData,
+            },
         });
     } catch (err) {
         return apiResponse(res, {
@@ -222,12 +241,55 @@ const deleteQuestion = async (
     }
 };
 
+const changeVerified = async (
+    req: TypedRequest<IQuestion, IdParams>,
+    res: Response
+) => {
+    const { id } = req.params;
+
+    // Verifico que el ID sea un ID de mongoose válido
+    if (!isValidId(id))
+        return apiResponse(res, {
+            status: StatusCodes.BAD_REQUEST,
+            message: "Id inválido",
+        });
+
+    try {
+        const questionFound = await QuestionModel.findById(id);
+
+        if (!questionFound)
+            return apiResponse(res, {
+                status: StatusCodes.NO_CONTENT,
+                message: "Pregunta no encontrado",
+            });
+
+        await QuestionModel.findByIdAndUpdate(
+            id,
+            { verified: !questionFound?.verified },
+            {
+                new: true,
+            }
+        );
+
+        return apiResponse(res, {
+            status: StatusCodes.OK,
+            message: "Verificación actualizada",
+        });
+    } catch (err) {
+        return apiResponse(res, {
+            status: StatusCodes.INTERNAL_SERVER_ERROR,
+            message: err as string,
+        });
+    }
+};
+
 const questionController = {
     getAll,
     getQuestion,
     addQuestion,
     updateQuestion,
     deleteQuestion,
+    changeVerified,
 };
 
 export default questionController;
