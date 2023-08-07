@@ -1,7 +1,8 @@
-import { Schema, model } from "mongoose";
+import { PaginateModel, Schema, model } from "mongoose";
 import { IQuestion } from "../interfaces/question.interface";
 import QuestionCategoryModel from "./questionCategory.model";
 import UserModel from "./user.model";
+import paginate from "mongoose-paginate-v2";
 
 /**
  * Permite representar un esquema de mongoose para una determinada "Pregunta"
@@ -46,9 +47,18 @@ const QuestionSchema = new Schema<IQuestion>(
     { timestamps: true }
 );
 
+// Agrego pligin para tener paginación de consulta de datos
+QuestionSchema.plugin(paginate);
+
+// interfaz representando el esquema como un documento de mongoose
+interface QuestionDocument extends Document, IQuestion {}
+
 /**
  * Representa un modelo de mongoose para una "Pregunta"
  */
-const QuestionModel = model("Question", QuestionSchema);
+const QuestionModel = model<QuestionDocument, PaginateModel<QuestionDocument>>(
+    "Question",
+    QuestionSchema
+);
 
 export default QuestionModel;
