@@ -4,7 +4,7 @@ import { IdParams, TypedRequest } from "../types/request";
 import { isValidId } from "../libs/validObjectId";
 import { apiResponse } from "../libs/response.handle";
 import QuestionModel from "../models/question.model";
-import { IQuestion } from "../interfaces/question.interface";
+import { IQuestion, IQuestionId } from "../interfaces/question.interface";
 import { getQueryQuestionOr } from "../query/question.query";
 
 /**
@@ -27,7 +27,9 @@ const getQuestion = async (
         });
 
     try {
-        const questionFound = await QuestionModel.findById(id).populate("category");
+        const questionFound = await QuestionModel.findById(id).populate(
+            "category"
+        );
         if (!questionFound)
             return apiResponse(res, {
                 status: StatusCodes.NO_CONTENT,
@@ -100,7 +102,7 @@ const getAll = async (
  * @returns la respuesta a la petición de una determinada Pregunta
  */
 const addQuestion = async (
-    req: TypedRequest<IQuestion, IdParams>,
+    req: TypedRequest<IQuestionId, IdParams>,
     res: Response
 ) => {
     if (!req.body)
@@ -115,16 +117,20 @@ const addQuestion = async (
             message: "Id usuario inválido",
         });
 
-    if (!isValidId(req.body.category as string))
+    if (!isValidId(req.body.category._id.toString()))
         return apiResponse(res, {
             status: StatusCodes.BAD_REQUEST,
             message: "Id categoría inválido",
         });
 
+    //const { _id, ...userDataBody } = req.body;
+
+    //const newQuestion = new QuestionModel(userDataBody);
     const newQuestion = new QuestionModel(req.body);
 
     try {
         const questionSaved = await newQuestion.save();
+        //console.log(questionSaved);
 
         return apiResponse(res, {
             status: StatusCodes.OK,
@@ -132,6 +138,8 @@ const addQuestion = async (
             data: questionSaved,
         });
     } catch (err) {
+        //console.log(err);
+
         return apiResponse(res, {
             status: StatusCodes.INTERNAL_SERVER_ERROR,
             message: err as string,
@@ -170,7 +178,7 @@ const updateQuestion = async (
             message: "Id usuario inválido",
         });
 
-    if (!isValidId(req.body.category as string))
+    if (!isValidId(req.body.category._id.toString()))
         return apiResponse(res, {
             status: StatusCodes.BAD_REQUEST,
             message: "Id categoría inválido",
