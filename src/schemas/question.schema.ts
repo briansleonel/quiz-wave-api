@@ -9,9 +9,16 @@ export const questionSchema = z.object({
         required_error: "Las opciones son requeridas",
     }),
     correct: z.number({ required_error: "La respuesta correcta es requerida" }),
-    category: z
-        .string({ required_error: "La categoría es requerida" })
-        .refine(isValidId, { message: "Identificador de categoría no válido" }),
+    category: z.object(
+        {
+            _id: z.string(),
+            //.refine(isValidId, {message: "Identificador de categoría no válido"}),
+            name: z.string(),
+        },
+        { required_error: "La categoría es requerida" }
+    ),
+    //.string({ required_error: "La categoría es requerida" })
+    //.refine(isValidId, { message: "Identificador de categoría no válido" }),
     user: z
         .string({ required_error: "El usuario es requerido" })
         .refine(isValidId, { message: "Identificador de usuario no válido" }),

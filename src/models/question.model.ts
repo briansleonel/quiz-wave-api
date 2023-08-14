@@ -33,7 +33,7 @@ const QuestionSchema = new Schema<IQuestion>(
             type: Schema.Types.ObjectId,
             ref: UserModel,
             required: [true, "El usuario es requerido"],
-            select: false,
+            //select: false,
         },
         description: {
             type: String,
