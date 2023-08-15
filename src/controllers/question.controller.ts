@@ -5,7 +5,7 @@ import { isValidId } from "../libs/validObjectId";
 import { apiResponse } from "../libs/response.handle";
 import QuestionModel from "../models/question.model";
 import { IQuestion, IQuestionId } from "../interfaces/question.interface";
-import { getQueryQuestionOr } from "../query/question.query";
+import { getOrderByRecents, getQueryQuestionOr } from "../query/question.query";
 
 /**
  * Permite devolver una Pregunta, de acuerdo a la coincidencia con algún ID
@@ -72,6 +72,9 @@ const getAll = async (
         const questions = await QuestionModel.paginate(query, {
             ...options,
             populate: "category",
+            sort: {
+                createdAt: getOrderByRecents(req),
+            },
         });
 
         // excluyo los datos que no quiero enviar en el response
