@@ -61,13 +61,13 @@ const getCategory = async (
 };
 
 /**
- * Permite devolver todas la Categories disponibles en la BD.
+ * Permite devolver todas la Categories disponibles en la BD usando querys
  *
  * @param req solicitud HTTP desde el cliente
  * @param res respuesta a una determinada petición del cliente
  * @returns la respuesta a la petición. Si todo sale bien, devuelve todas las "Categories"
  */
-const getAll = async (
+const getAllQuery = async (
     req: TypedRequest<IQuestionCategory, IdParams>,
     res: Response
 ) => {
@@ -94,6 +94,37 @@ const getAll = async (
                 totalData: categories.totalDocs,
                 ...restData,
             },
+        });
+    } catch (err) {
+        return apiResponse(res, {
+            status: StatusCodes.INTERNAL_SERVER_ERROR,
+            data: null,
+            message: err as string,
+        });
+    }
+};
+
+/**
+ * Permite devolver todas la Categories disponibles en la BD usando querys
+ *
+ * @param req solicitud HTTP desde el cliente
+ * @param res respuesta a una determinada petición del cliente
+ * @returns la respuesta a la petición. Si todo sale bien, devuelve todas las "Categories"
+ */
+const getAllCategories = async (
+    _req: TypedRequest<IQuestionCategory, IdParams>,
+    res: Response
+) => {
+    try {
+        // Busco los datos y los pagino
+        const categories = await QuestionCategoryModel.find({});
+
+        //console.log(restData);
+
+        return apiResponse(res, {
+            status: StatusCodes.OK,
+            data: categories,
+            message: "Mostrando todas las categorías",
         });
     } catch (err) {
         return apiResponse(res, {
@@ -231,7 +262,8 @@ const deleteCategory = async (
 };
 
 const questionCategoryController = {
-    getAll,
+    getAllQuery,
+    getAllCategories,
     addCategory,
     getCategory,
     updateCategory,

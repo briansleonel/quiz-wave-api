@@ -8,8 +8,13 @@ const questionCategoryRouter = Router();
 
 questionCategoryRouter.get(
     "/category",
-    //authRequired,
-    questionCategoryController.getAll
+    authRequired,
+    questionCategoryController.getAllQuery
+);
+
+questionCategoryRouter.get(
+    "/category/all",
+    questionCategoryController.getAllCategories
 );
 
 questionCategoryRouter.get(
