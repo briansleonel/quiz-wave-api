@@ -30,7 +30,8 @@ export function getQueryQuestionOr(req: TypedRequest<IQuestion, IdParams>) {
     let query: Query = {};
 
     // Verifico si se encuentra alguno de los campos del query y los asigno
-    if (req.query.verified) query.verified = Boolean(req.query.verified);
+    if (req.query.verified)
+        query.verified = req.query.verified.toString().toLowerCase() === "true";
     if (req.query.category) query.category = req.query.category as string;
     if (req.query.user) query.user = req.query.user as string;
 
@@ -44,5 +45,5 @@ export function getQueryQuestionOr(req: TypedRequest<IQuestion, IdParams>) {
  * @returns 1 si se ordena por los más recientes, -1 en caso contrario
  */
 export function getOrderByRecents(req: TypedRequest<IQuestion, IdParams>) {
-    return req.query.recents || req.query.recents === "true" ? 1 : -1;
+    return !req.query.recents || req.query.recents === "true" ? 1 : -1;
 }
