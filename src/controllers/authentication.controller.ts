@@ -67,6 +67,8 @@ const login = async (req: TypedRequest<ILogin, IdParams>, res: Response) => {
             data: {
                 _id: userFound._id,
                 role: userFound.role,
+                username: userFound.username,
+                fullName: `${userFound.lastName}, ${userFound.firstName}`,
             },
         });
     } catch (err) {
@@ -138,6 +140,8 @@ const register = async (req: TypedRequest<IUser, IdParams>, res: Response) => {
             data: {
                 _id: userSaved._id,
                 role: userSaved.role,
+                username: userSaved.username,
+                fullName: `${userSaved.lastName}, ${userSaved.firstName}`,
             },
             message: "Se ha creado su cuenta",
         });
