@@ -1,8 +1,8 @@
 import { Document, PaginateModel, Schema, model } from "mongoose";
-import { IUser } from "../interfaces/user.interface";
 import { isEmail } from "../libs/emailValidator";
 import { Role } from "../libs/role.enum";
 import paginate from "mongoose-paginate-v2";
+import { IUser } from "../types/user";
 
 /**
  * Permite representar un esquema de mongoose para un determinado "Usuario"

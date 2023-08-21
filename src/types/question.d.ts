@@ -1,5 +1,5 @@
 import { Types } from "mongoose";
-import { IQuestionCategoryId } from "./questionCategory.interface";
+import { IQuestionCategoryId } from "./questionCategory";
 
 export interface IQuestion {
     question: string;

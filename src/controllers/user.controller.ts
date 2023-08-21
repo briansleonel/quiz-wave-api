@@ -5,8 +5,8 @@ import { IdParams, TypedRequest } from "../types/request";
 import { isValidId } from "../libs/validObjectId";
 import { apiResponse } from "../libs/response.handle";
 import UserModel from "../models/user.model";
-import { IUser } from "../interfaces/user.interface";
 import { getQueryUserOr } from "../query/user.query";
+import { IUser } from "../types/user";
 
 /**
  * Permite devolver un Usuario, de acuerdo a la coincidencia con algún ID

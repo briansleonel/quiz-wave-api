@@ -2,11 +2,11 @@ import { Request, Response } from "express";
 import { StatusCodes } from "http-status-codes";
 import cookie from "cookie";
 import { IdParams, TypedRequest } from "../types/request";
-import { ILogin, IUser } from "../interfaces/user.interface";
 import UserModel from "../models/user.model";
 import { apiResponse } from "../libs/response.handle";
 import { comparePassword, encryptPassword } from "../libs/bcrypt";
 import { createAccessToken } from "../libs/jwt";
+import { ILogin, IUser } from "../types/user";
 
 /**
  * Permite realizar un Inicio de Sesión en la api

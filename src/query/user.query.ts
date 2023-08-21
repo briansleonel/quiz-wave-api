@@ -1,5 +1,5 @@
-import { IUser } from "../interfaces/user.interface";
 import { IdParams, TypedRequest } from "../types/request";
+import { IUser } from "../types/user";
 
 export function getQueryUser(req: TypedRequest<IUser, IdParams>) {
     const username = { $regex: req.query.username || "", $options: "i" };

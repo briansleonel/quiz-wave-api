@@ -1,4 +1,4 @@
-import { IQuestion } from "../interfaces/question.interface";
+import { IQuestion } from "../types/question";
 import { IdParams, TypedRequest } from "../types/request";
 
 interface Query {

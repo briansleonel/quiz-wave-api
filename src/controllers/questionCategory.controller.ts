@@ -10,7 +10,7 @@ import {
     //TypedRequestBody,
     //TypedRequestParams,
 } from "../types/request";
-import { IQuestionCategory } from "../interfaces/questionCategory.interface";
+import { IQuestionCategory } from "../types/questionCategory";
 
 /**
  * Permite realizar la consulta de una "Category" en la BD, a partir de un determinado :id, recibido a través del req.params

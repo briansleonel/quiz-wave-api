@@ -1,5 +1,5 @@
 import { PaginateModel, Schema, model } from "mongoose";
-import { IQuestion } from "../interfaces/question.interface";
+import { IQuestion } from "../types/question";
 import QuestionCategoryModel from "./questionCategory.model";
 import UserModel from "./user.model";
 import paginate from "mongoose-paginate-v2";

@@ -1,7 +1,7 @@
 import { Request } from "express";
 import { Types } from "mongoose";
 import { Role } from "../libs/role.enum";
-import { IUserRequest } from "../interfaces/user.interface";
+import { IUserRequest } from "../interfaces/user";
 
 /**
  * Representa una Petición (Request) con un tipo de body y params tipados

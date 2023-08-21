@@ -4,7 +4,7 @@ import { IdParams, TypedRequest } from "../types/request";
 import { isValidId } from "../libs/validObjectId";
 import { apiResponse } from "../libs/response.handle";
 import QuestionModel from "../models/question.model";
-import { IQuestion, IQuestionId } from "../interfaces/question.interface";
+import { IQuestion, IQuestionId } from "../types/question";
 import { getOrderByRecents, getQueryQuestionOr } from "../query/question.query";
 
 /**
