@@ -45,5 +45,5 @@ export function getQueryQuestionOr(req: TypedRequest<IQuestion, IdParams>) {
  * @returns 1 si se ordena por los más recientes, -1 en caso contrario
  */
 export function getOrderByRecents(req: TypedRequest<IQuestion, IdParams>) {
-    return !req.query.recents || req.query.recents === "true" ? 1 : -1;
+    return !req.query.recents || req.query.recents === "true" ? -1 : 1;
 }
