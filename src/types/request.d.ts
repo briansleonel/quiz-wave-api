@@ -25,3 +25,8 @@ export interface TypedRequestParams<T> extends Request {
 export interface IdParams {
     id: string;
 }
+
+export interface GameParams {
+    category: string;
+    limit?: number
+}
