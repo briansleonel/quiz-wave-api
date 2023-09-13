@@ -71,7 +71,10 @@ const getAll = async (
         // Busco los datos y los pagino
         const questions = await QuestionModel.paginate(query, {
             ...options,
-            populate: "category",
+            populate: [
+                { path: "category" },
+                //{ path: "user", select: "username" },
+            ],
             sort: {
                 createdAt: getOrderByRecents(req),
             },
