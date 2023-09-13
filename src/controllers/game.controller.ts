@@ -26,14 +26,14 @@ const playGame = async (
     const questions: Array<IQuestion> = [];
 
     // Verifico si se envía un id de categoría que este sea válido
-    if (category !== "all" && !isValidId(category))
+    if (category !== "random" && !isValidId(category))
         return apiResponse(res, {
             status: StatusCodes.BAD_REQUEST,
             message: "Id inválido",
         });
 
     // si se envío un ID de categoría, lo asigno a la query
-    if (category && category !== "all") query.category = category;
+    if (category && category !== "random") query.category = category;
 
     try {
         // Busco todas las preguntas en la BD usando la query
@@ -52,9 +52,9 @@ const playGame = async (
 
         return apiResponse(res, {
             message: `Total: ${limit} preguntas - Categoría: ${
-                category === "all" ? "Aletario" : questions[0].category.name
+                category === "random" ? "Aletario" : questions[0].category.name
             }`,
-            status: StatusCodes.ACCEPTED,
+            status: StatusCodes.OK,
             data: questions,
         });
     } catch (error) {
