@@ -6,6 +6,8 @@ import { apiResponse } from "../libs/response.handle";
 import { StatusCodes } from "http-status-codes";
 import QuestionModel from "../models/question.model";
 import { generateRandomNumbers } from "../libs/random";
+import { IQuestionCategoryId } from "../types/questionCategory";
+import QuestionCategoryModel from "../models/questionCategory.model";
 
 export interface GameQuery {
     category?: string;
@@ -65,8 +67,46 @@ const playGame = async (
     }
 };
 
+const getCategoriesGame = async (
+    _req: TypedRequest<IQuestionCategoryId, GameParams>,
+    res: Response
+) => {
+    try {
+        // Busco todas las categorías
+        const categories = await QuestionCategoryModel.find({});
+
+        // Creo un array para las categorías a mostrar
+        let categoriesShow: Array<IQuestionCategoryId> = [];
+
+        // Recorro el array de categorías
+        for (let cat of categories) {
+            // cuento los documentos de preguntas que conitenen una determinada categoría
+            const count = await QuestionModel.count({
+                category: cat,
+            });
+            // Si es mayor a 10, se agrega a las categorías a mostrar
+            if (count >= 10) {
+                categoriesShow.push(cat);
+            }
+        }
+
+        return apiResponse(res, {
+            status: StatusCodes.OK,
+            data: categoriesShow,
+            message: "Mostrando categorías para iniciar el juego",
+        });
+    } catch (err) {
+        return apiResponse(res, {
+            status: StatusCodes.INTERNAL_SERVER_ERROR,
+            data: null,
+            message: err as string,
+        });
+    }
+};
+
 const gameController = {
     playGame,
+    getCategoriesGame,
 };
 
 export default gameController;
