@@ -104,6 +104,28 @@ const getAllQuery = async (
     }
 };
 
+const getAll = async (
+    _req: TypedRequest<IQuestionCategory, IdParams>,
+    res: Response
+) => {
+    try {
+        // Busco los datos y los pagino
+        const categories = await QuestionCategoryModel.find({});
+
+        return apiResponse(res, {
+            status: StatusCodes.OK,
+            data: categories,
+            message: "Datos encontrados",
+        });
+    } catch (err) {
+        return apiResponse(res, {
+            status: StatusCodes.INTERNAL_SERVER_ERROR,
+            data: null,
+            message: err as string,
+        });
+    }
+};
+
 /**
  * Permite añadir una nueva categoría a la BD
  *
@@ -236,6 +258,7 @@ const questionCategoryController = {
     getCategory,
     updateCategory,
     deleteCategory,
+    getAll,
 };
 
 export default questionCategoryController;

@@ -14,6 +14,12 @@ questionCategoryRouter.get(
 );
 
 questionCategoryRouter.get(
+    "/all/category",
+    authRequired,
+    questionCategoryController.getAllQuery
+);
+
+questionCategoryRouter.get(
     "/category/:id",
     authRequired,
     questionCategoryController.getCategory
