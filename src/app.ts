@@ -15,20 +15,16 @@ const app = express();
 app.use(express.json()); // Permitir la conversion del req.body en un objeto de js
 app.use(morgan("dev")); // Hacemos uso del HTTP Request Logger con la configuración dev
 app.use(cookieParser()); // Permitir req.cookies se transofrmen a onjeto de js
+app.use(cors()); // Uso de cors
+
 /*
 app.use(
     cors({
-        origin: "http://192.168.0.12:3000",
+        origin: ["http://localhost:3000", "http://localhost:5173"]
         credentials: true,
     })
 );
 */
-app.use(
-    cors({
-        origin: "*",
-        credentials: true,
-    })
-);
 
 // Routes
 app.use("/api", userRouter);
