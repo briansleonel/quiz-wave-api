@@ -9,6 +9,5 @@ import { APIResponse } from "../types/response";
  * @param apiRes datos que serán enviados como respuesta de la petición
  */
 export function apiResponse<I>(res: Response, apiRes: APIResponse<I>) {
-    res.status(apiRes.status);
-    res.json(apiRes);
+    res.status(apiRes.status).json(apiRes);
 }
