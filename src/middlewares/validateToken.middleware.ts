@@ -6,7 +6,8 @@ import config from "../config/config";
 import { IdParams, TypedRequest } from "../types/request";
 
 /**
- * Middleware que permite verificar si un "token", recibido en las cookies, es válido
+ * Middleware que permite verificar si un "token" recibido en los Headers es válido
+ * El token debe ser enviado en el header Authorization como Bearer XXX
  *
  * @param req
  * @param res
@@ -18,6 +19,43 @@ export function authRequired<T>(
     res: Response,
     next: NextFunction
 ) {
+    /**********************************************************
+        Validación de token por header Authorization
+    **********************************************************/
+
+    // Verifico que se envíe Authorization en los headers
+    if (!req.headers.authorization) {
+        return apiResponse(res, {
+            status: StatusCodes.UNAUTHORIZED,
+            message: "No Token: Autorización denegada",
+        });
+    }
+
+    // Extraigo el token del header Authorization - se espera formato -> Bearer XXX, interesa el token en posición 1
+    const token = req.headers.authorization.split(" ")[1];
+
+    // Verifico si existe algún token
+    if (!token) {
+        return apiResponse(res, {
+            status: StatusCodes.UNAUTHORIZED,
+            message: "No Token: Autorización denegada",
+        });
+    }
+
+    // Verifico que el token sea válido
+    jwt.verify(token, config.TOKEN_SECRET, (err: any) => {
+        if (err)
+            return apiResponse(res, {
+                status: StatusCodes.FORBIDDEN,
+                message: "Token Inválido",
+            });
+        return next();
+    });
+
+    /**********************************************************
+        Validación de token por cookie
+    **********************************************************/
+    /*
     // Extraigo el token de la petición del cliente
     const { token } = req.cookies;
 
@@ -36,8 +74,7 @@ export function authRequired<T>(
                 message: "Token Inválido",
             });
 
-        // Añado los datos del usuario guardados en el token
-        //req.user = user;
-        next();
+        return next();
     });
+    */
 }
