@@ -28,6 +28,7 @@ const login = async (req: TypedRequest<ILogin, IdParams>, res: Response) => {
     try {
         // Busco el usuario de acuerdo a su username
         const userFound = await UserModel.findOne({ username });
+        
         // Si no se encontró nada, envió la respuesta al cliente
         if (!userFound)
             return apiResponse(res, {
@@ -49,17 +50,21 @@ const login = async (req: TypedRequest<ILogin, IdParams>, res: Response) => {
             role: userFound.role,
         });
 
-        // Añadir token en el header
+        // Añadir token en el header como cookie
+        /*
         res.setHeader(
             "Set-Cookie",
             cookie.serialize("token", token as string, {
-                httpOnly: true,
-                secure: process.env.NODE_ENV !== "development",
-                sameSite: "strict",
+                //httpOnly: true,
+                //secure: process.env.NODE_ENV !== "development",
+                //sameSite: "strict",
                 maxAge: 60 * 60 * 24,
                 path: "/",
             })
         );
+        */
+
+        //res.setHeader("Authorization", `Bearer ${token as string}`);
 
         return apiResponse(res, {
             status: StatusCodes.OK,
@@ -69,6 +74,7 @@ const login = async (req: TypedRequest<ILogin, IdParams>, res: Response) => {
                 role: userFound.role,
                 username: userFound.username,
                 fullName: `${userFound.lastName}, ${userFound.firstName}`,
+                token,
             },
         });
     } catch (err) {
