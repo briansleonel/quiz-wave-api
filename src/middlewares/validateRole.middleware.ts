@@ -72,7 +72,9 @@ export async function valiateRoleUserQuestion<T>(
 ) {
     try {
         // Extraigo el token de la petición del cliente
-        const { token } = req.cookies;
+        //const { token } = req.cookies;
+        // Extraigo el token del header Authorization - se espera formato -> Bearer XXX, interesa el token en posición 1
+        const token = req.headers.authorization!.split(" ")[1];
 
         const { id } = req.params;
 
