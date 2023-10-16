@@ -27,7 +27,6 @@ const QuestionSchema = new Schema<IQuestion>(
             type: Schema.Types.ObjectId,
             ref: QuestionCategoryModel,
             required: [true, "La categoría es requerida"],
-            select: false,
         },
         user: {
             type: Schema.Types.ObjectId,
