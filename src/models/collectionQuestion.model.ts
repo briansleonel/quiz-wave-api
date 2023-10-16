@@ -38,6 +38,6 @@ interface CollectionQuestionDocument extends Document, ICollectionQuestion {}
 const CollectionQuestionModel = model<
     CollectionQuestionDocument,
     PaginateModel<CollectionQuestionDocument>
->("Collection", CollectionQuestionSchema);
+>("CollectionQuestion", CollectionQuestionSchema);
 
 export default CollectionQuestionModel;
