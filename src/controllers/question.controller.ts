@@ -130,7 +130,7 @@ const addQuestion = async (
         });
 
     const newQuestion = new QuestionModel(req.body);
-    console.log(newQuestion);
+
     try {
         const questionSaved = await newQuestion.save();
 
