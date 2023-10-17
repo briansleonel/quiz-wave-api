@@ -8,6 +8,7 @@ import userRouter from "./routes/user.route";
 import questionRouter from "./routes/question.route";
 import authRouter from "./routes/authentication.route";
 import gameRouter from "./routes/game.route";
+import collectionRouter from "./routes/collection.route";
 
 const app = express();
 
@@ -32,5 +33,6 @@ app.use("/api", authRouter);
 app.use("/api", questionRouter);
 app.use("/api", questionCategoryRouter);
 app.use("/api", gameRouter);
+app.use("/api", collectionRouter);
 
 export default app;
