@@ -4,8 +4,9 @@ import { IdParams, TypedRequest } from "../types/request";
 import { isValidId } from "../libs/validObjectId";
 import { apiResponse } from "../libs/response.handle";
 import QuestionModel from "../models/question.model";
-import { getOrderByRecents, getQueryQuestionOr } from "../query/question.query";
+import { getQueryQuestionOr } from "../query/question.query";
 import { IQuestion, IQuestionDTO } from "../types/question";
+import { getOrderByRecents } from "../query/orderByRecents.query";
 
 /**
  * Permite devolver una Pregunta, de acuerdo a la coincidencia con algún ID
