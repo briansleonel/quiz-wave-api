@@ -55,9 +55,48 @@ const addCollection = async (
 };
 
 const updateCollection = async (
-    _req: TypedRequest<ICollectionDTO, IdParams>,
-    _res: Response
-) => {};
+    req: TypedRequest<ICollectionDTO, IdParams>,
+    res: Response
+) => {
+    const { id } = req.params;
+
+    if (!isValidId(id))
+        return apiResponse(res, {
+            status: StatusCodes.BAD_REQUEST,
+            message: "ID ingresado inválido",
+        });
+
+    if (!isValidId(req.body.user))
+        return apiResponse(res, {
+            status: StatusCodes.BAD_REQUEST,
+            message: "Id de usuario inválido",
+        });
+
+    try {
+        const collectionUpdated = await CollectionModel.findByIdAndUpdate(
+            id,
+            req.body,
+            { new: true }
+        );
+
+        if (!collectionUpdated)
+            return apiResponse(res, {
+                status: StatusCodes.BAD_REQUEST,
+                message: "Colección no actualizada",
+            });
+
+        return apiResponse(res, {
+            status: StatusCodes.OK,
+            message: "Coección actualizada",
+            data: collectionUpdated,
+        });
+    } catch (error) {
+        return apiResponse(res, {
+            status: StatusCodes.INTERNAL_SERVER_ERROR,
+            message: error as string,
+        });
+    }
+};
 
 const deleteCollection = async (
     _req: TypedRequest<ICollectionDTO, IdParams>,
