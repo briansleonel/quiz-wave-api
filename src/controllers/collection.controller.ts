@@ -87,7 +87,7 @@ const updateCollection = async (
 
         return apiResponse(res, {
             status: StatusCodes.OK,
-            message: "Coección actualizada",
+            message: "Colección actualizada",
             data: collectionUpdated,
         });
     } catch (error) {
@@ -99,9 +99,38 @@ const updateCollection = async (
 };
 
 const deleteCollection = async (
-    _req: TypedRequest<ICollectionDTO, IdParams>,
-    _res: Response
-) => {};
+    req: TypedRequest<ICollectionDTO, IdParams>,
+    res: Response
+) => {
+    const { id } = req.params;
+
+    if (!isValidId(id))
+        return apiResponse(res, {
+            status: StatusCodes.BAD_REQUEST,
+            message: "Id ingresado inválido",
+        });
+
+    try {
+        const collectionDeleted = await CollectionModel.findByIdAndDelete(id);
+
+        if (!collectionDeleted)
+            return apiResponse(res, {
+                status: StatusCodes.BAD_REQUEST,
+                message: "Colección no eliminada, no existe",
+            });
+
+        return apiResponse(res, {
+            status: StatusCodes.OK,
+            message: "Colección eliminada",
+            data: collectionDeleted,
+        });
+    } catch (error) {
+        return apiResponse(res, {
+            status: StatusCodes.INTERNAL_SERVER_ERROR,
+            message: error as string,
+        });
+    }
+};
 
 const collectionController = {
     getCollection,
