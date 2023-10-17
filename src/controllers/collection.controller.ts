@@ -7,9 +7,40 @@ import CollectionModel from "../models/collection.model";
 import { isValidId } from "../libs/validObjectId";
 
 const getCollection = async (
-    _req: TypedRequest<ICollectionDTO, IdParams>,
-    _res: Response
-) => {};
+    req: TypedRequest<ICollectionDTO, IdParams>,
+    res: Response
+) => {
+    const { id } = req.params;
+
+    if (!isValidId(id))
+        return apiResponse(res, {
+            status: StatusCodes.BAD_REQUEST,
+            message: "Id ingresado inválido",
+        });
+
+    try {
+        const collectionFound = await CollectionModel.findById(id);
+
+        if (!collectionFound) {
+            console.log("No se encontró");
+            return apiResponse(res, {
+                status: StatusCodes.NO_CONTENT,
+                message: "Colección no encontrada",
+            });
+        }
+
+        return apiResponse(res, {
+            status: StatusCodes.OK,
+            message: "Colección encontrada",
+            data: collectionFound,
+        });
+    } catch (error) {
+        return apiResponse(res, {
+            status: StatusCodes.INTERNAL_SERVER_ERROR,
+            message: error as string,
+        });
+    }
+};
 
 const getCollectionsQuery = async (
     _req: TypedRequest<ICollectionDTO, IdParams>,
