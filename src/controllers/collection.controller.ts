@@ -5,6 +5,7 @@ import { apiResponse } from "../libs/response.handle";
 import { StatusCodes } from "http-status-codes";
 import CollectionModel from "../models/collection.model";
 import { isValidId } from "../libs/validObjectId";
+import { getOrderByRecents } from "../query/orderByRecents.query";
 
 const getCollection = async (
     req: TypedRequest<ICollectionDTO, IdParams>,
@@ -43,9 +44,42 @@ const getCollection = async (
 };
 
 const getCollectionsQuery = async (
-    _req: TypedRequest<ICollectionDTO, IdParams>,
-    _res: Response
-) => {};
+    req: TypedRequest<ICollectionDTO, IdParams>,
+    res: Response
+) => {
+    const options = {
+        page: req.query.page ? Number(req.query.page) : 1,
+        limit: req.query.limit ? Number(req.query.limit) : 10,
+    };
+
+    const query = {};
+
+    try {
+        // Busco los datos y los pagino
+        const collections = await CollectionModel.paginate(query, {
+            ...options,
+            sort: { createdAt: getOrderByRecents(req) },
+        });
+
+        // excluyo los datos que no quiero enviar en el response
+        const { docs, offset, meta, totalDocs, ...restData } = collections;
+
+        return apiResponse(res, {
+            status: StatusCodes.OK,
+            message: totalDocs > 0 ? "Datos encontrados" : "Sin datos",
+            data: collections.docs,
+            pagination: {
+                totalData: collections.totalDocs,
+                ...restData,
+            },
+        });
+    } catch (error) {
+        return apiResponse(res, {
+            status: StatusCodes.INTERNAL_SERVER_ERROR,
+            message: error as string,
+        });
+    }
+};
 
 const addCollection = async (
     req: TypedRequest<ICollectionDTO, IdParams>,
