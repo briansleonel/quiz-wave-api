@@ -24,7 +24,6 @@ const getCollection = async (
         const collectionFound = await CollectionModel.findById(id);
 
         if (!collectionFound) {
-            console.log("No se encontró");
             return apiResponse(res, {
                 status: StatusCodes.NO_CONTENT,
                 message: "Colección no encontrada",
@@ -106,12 +105,12 @@ const addCollection = async (
         if (!collectionSaved)
             return apiResponse(res, {
                 status: StatusCodes.BAD_REQUEST,
-                message: "Colleción no guardada",
+                message: "Colección no guardada",
             });
 
         return apiResponse(res, {
             status: StatusCodes.OK,
-            message: "Colleción guardada",
+            message: "Colección guardada",
             data: collectionSaved,
         });
     } catch (error) {
