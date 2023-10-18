@@ -6,6 +6,7 @@ import { StatusCodes } from "http-status-codes";
 import CollectionModel from "../models/collection.model";
 import { isValidId } from "../libs/validObjectId";
 import { getOrderByRecents } from "../query/orderByRecents.query";
+import { getQueryCollectionOr } from "../query/collection.query";
 
 const getCollection = async (
     req: TypedRequest<ICollectionDTO, IdParams>,
@@ -47,18 +48,20 @@ const getCollectionsQuery = async (
     req: TypedRequest<ICollectionDTO, IdParams>,
     res: Response
 ) => {
+    // Opciones de paginación de datos
     const options = {
         page: req.query.page ? Number(req.query.page) : 1,
         limit: req.query.limit ? Number(req.query.limit) : 10,
     };
 
-    const query = {};
+    // Query para el filtrado de datos
+    const query = getQueryCollectionOr(req);
 
     try {
         // Busco los datos y los pagino
         const collections = await CollectionModel.paginate(query, {
             ...options,
-            sort: { createdAt: getOrderByRecents(req) },
+            sort: { createdAt: getOrderByRecents(req) }, // Ordenar los datos por más recientes o antiguos
         });
 
         // excluyo los datos que no quiero enviar en el response
