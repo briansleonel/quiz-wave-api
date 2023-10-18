@@ -37,13 +37,3 @@ export function getQueryQuestionOr(req: TypedRequest<IQuestion, IdParams>) {
 
     return { ...queryOr, ...query };
 }
-
-/**
- * Permite devolver el orden de busqueda de la consulta.
- * Se puede ordenar el resultado de la búsqueda por los creados recientemente, o los más antiguos.
- * @param req petición del cliente
- * @returns 1 si se ordena por los más recientes, -1 en caso contrario
- */
-export function getOrderByRecents(req: TypedRequest<IQuestion, IdParams>) {
-    return !req.query.recents || req.query.recents === "true" ? -1 : 1;
-}

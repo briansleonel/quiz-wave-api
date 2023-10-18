@@ -4,8 +4,9 @@ import { IdParams, TypedRequest } from "../types/request";
 import { isValidId } from "../libs/validObjectId";
 import { apiResponse } from "../libs/response.handle";
 import QuestionModel from "../models/question.model";
-import { IQuestion, IQuestionId } from "../types/question";
-import { getOrderByRecents, getQueryQuestionOr } from "../query/question.query";
+import { getQueryQuestionOr } from "../query/question.query";
+import { IQuestion, IQuestionDTO } from "../types/question";
+import { getOrderByRecents } from "../query/orderByRecents.query";
 
 /**
  * Permite devolver una Pregunta, de acuerdo a la coincidencia con algún ID
@@ -108,7 +109,7 @@ const getAll = async (
  * @returns la respuesta a la petición de una determinada Pregunta
  */
 const addQuestion = async (
-    req: TypedRequest<IQuestionId, IdParams>,
+    req: TypedRequest<IQuestionDTO, IdParams>,
     res: Response
 ) => {
     if (!req.body)
@@ -117,26 +118,22 @@ const addQuestion = async (
             message: "Sin datos",
         });
 
-    if (!isValidId(req.body.user as string))
+    if (!isValidId(req.body.user))
         return apiResponse(res, {
             status: StatusCodes.BAD_REQUEST,
             message: "Id usuario inválido",
         });
 
-    if (!isValidId(req.body.category._id.toString()))
+    if (!isValidId(req.body.category))
         return apiResponse(res, {
             status: StatusCodes.BAD_REQUEST,
             message: "Id categoría inválido",
         });
 
-    //const { _id, ...userDataBody } = req.body;
-
-    //const newQuestion = new QuestionModel(userDataBody);
     const newQuestion = new QuestionModel(req.body);
 
     try {
         const questionSaved = await newQuestion.save();
-        //console.log(questionSaved);
 
         return apiResponse(res, {
             status: StatusCodes.OK,
@@ -144,8 +141,6 @@ const addQuestion = async (
             data: questionSaved,
         });
     } catch (err) {
-        //console.log(err);
-
         return apiResponse(res, {
             status: StatusCodes.INTERNAL_SERVER_ERROR,
             message: err as string,
@@ -161,7 +156,7 @@ const addQuestion = async (
  * @returns la respuesta a la petición de una determinada Pregunta
  */
 const updateQuestion = async (
-    req: TypedRequest<IQuestion, IdParams>,
+    req: TypedRequest<IQuestionDTO, IdParams>,
     res: Response
 ) => {
     const { id } = req.params;
@@ -178,13 +173,13 @@ const updateQuestion = async (
             message: "Sin datos",
         });
 
-    if (!isValidId(req.body.user as string))
+    if (!isValidId(req.body.user))
         return apiResponse(res, {
             status: StatusCodes.BAD_REQUEST,
             message: "Id usuario inválido",
         });
 
-    if (!isValidId(req.body.category._id.toString()))
+    if (!isValidId(req.body.category))
         return apiResponse(res, {
             status: StatusCodes.BAD_REQUEST,
             message: "Id categoría inválido",
@@ -223,7 +218,7 @@ const updateQuestion = async (
  * @returns la respuesta a la petición de una determinada Pregunta
  */
 const deleteQuestion = async (
-    req: TypedRequest<IQuestion, IdParams>,
+    req: TypedRequest<IQuestionDTO, IdParams>,
     res: Response
 ) => {
     const { id } = req.params;
@@ -256,7 +251,7 @@ const deleteQuestion = async (
 };
 
 const changeVerified = async (
-    req: TypedRequest<IQuestion, IdParams>,
+    req: TypedRequest<IQuestionDTO, IdParams>,
     res: Response
 ) => {
     const { id } = req.params;

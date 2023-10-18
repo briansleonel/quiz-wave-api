@@ -4,6 +4,6 @@ export interface IQuestionCategory {
     name: string;
 }
 
-export interface IQuestionCategoryId extends IQuestionCategory {
+export interface IQuestionCategoryWithId extends IQuestionCategory {
     _id: Types.ObjectId;
 }

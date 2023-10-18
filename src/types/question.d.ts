@@ -1,19 +1,29 @@
 import { Types } from "mongoose";
-import { IQuestionCategoryId } from "./questionCategory";
+import { IQuestionCategoryWithId } from "./questionCategory";
 
-export interface IQuestion {
+export interface ICollectionQuestion {
     question: string;
-    //options: IQuestionOptions;
     options: Array<string>;
-    //correct: string;
     correct: number;
-    //category: Types.ObjectId | string | IQuestionCategory;
-    category: IQuestionCategoryId;
-    user: Types.ObjectId | string;
-    verified: boolean;
     description: string;
+    duration: number;
 }
 
-export interface IQuestionId extends IQuestion {
+export interface ICollectionQuestionWithId {
+    _id: Types.ObjectId;
+}
+
+interface IQuestion extends Omit<ICollectionQuestion, "duration"> {
+    category: IQuestionCategoryWithId;
+    user: Types.ObjectId | string;
+    verified: boolean;
+}
+
+interface IQuestionDTO extends Omit<IQuestion, "category" | "user"> {
+    category: string;
+    user: string;
+}
+
+export interface IQuestionWithId extends IQuestion {
     _id: Types.ObjectId;
 }

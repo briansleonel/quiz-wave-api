@@ -6,8 +6,8 @@ import { apiResponse } from "../libs/response.handle";
 import { StatusCodes } from "http-status-codes";
 import QuestionModel from "../models/question.model";
 import { generateRandomNumbers } from "../libs/random";
-import { IQuestionCategoryId } from "../types/questionCategory";
 import QuestionCategoryModel from "../models/questionCategory.model";
+import { IQuestionCategoryWithId } from "../types/questionCategory";
 
 export interface GameQuery {
     category?: string;
@@ -68,7 +68,7 @@ const playGame = async (
 };
 
 const getCategoriesGame = async (
-    _req: TypedRequest<IQuestionCategoryId, GameParams>,
+    _req: TypedRequest<IQuestionCategoryWithId, GameParams>,
     res: Response
 ) => {
     try {
@@ -76,7 +76,7 @@ const getCategoriesGame = async (
         const categories = await QuestionCategoryModel.find({});
 
         // Creo un array para las categorías a mostrar
-        let categoriesShow: Array<IQuestionCategoryId> = [];
+        let categoriesShow: Array<IQuestionCategoryWithId> = [];
 
         // Recorro el array de categorías
         for (let cat of categories) {
