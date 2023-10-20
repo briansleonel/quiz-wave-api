@@ -23,7 +23,7 @@ const CollectionQuestionSchema = new Schema<ICollectionQuestion>(
         },
         duration: { type: Number, default: 20 },
     },
-    { timestamps: true }
+    { timestamps: false }
 );
 
 // Agrego pligin para tener paginación de consulta de datos
