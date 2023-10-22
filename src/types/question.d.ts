@@ -13,13 +13,13 @@ export interface ICollectionQuestionWithId {
     _id: Types.ObjectId;
 }
 
-interface IQuestion extends Omit<ICollectionQuestion, "duration"> {
+export interface IQuestion extends Omit<ICollectionQuestion, "duration"> {
     category: IQuestionCategoryWithId;
     user: Types.ObjectId | string;
     verified: boolean;
 }
 
-interface IQuestionDTO extends Omit<IQuestion, "category" | "user"> {
+export interface IQuestionDTO extends Omit<IQuestion, "category" | "user"> {
     category: string;
     user: string;
 }
