@@ -9,6 +9,7 @@ import questionRouter from "./routes/question.route";
 import authRouter from "./routes/authentication.route";
 import gameRouter from "./routes/game.route";
 import collectionRouter from "./routes/collection.route";
+import { errorHandlerMiddleware } from "./middlewares/errorHandler.middleware";
 
 const app = express();
 
@@ -34,5 +35,8 @@ app.use("/api", questionRouter);
 app.use("/api", questionCategoryRouter);
 app.use("/api", gameRouter);
 app.use("/api", collectionRouter);
+
+// Middleware Response
+app.use(errorHandlerMiddleware);
 
 export default app;
