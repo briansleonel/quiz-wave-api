@@ -34,6 +34,10 @@ async function deleteUser(id: string) {
     return await UserModel.findByIdAndDelete(id);
 }
 
+async function findUserByUsername(username: string) {
+    return await UserModel.findOne({ username });
+}
+
 export default {
     getUser,
     addUser,
@@ -41,4 +45,5 @@ export default {
     deleteUser,
     getFilteredUsers,
     updateUser,
+    findUserByUsername,
 };

@@ -77,7 +77,7 @@ const getAll = async (
 };
 
 /**
- * Permite añadir un nuevo usuario a la BD
+ * Permite añadir un nuevo usuario a la BD **ELIMINAR CONTROLADOR**
  *
  * @param req solicitud HTTP desde el cliente
  * @param res respuesta a una determinada petición del cliente

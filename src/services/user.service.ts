@@ -40,7 +40,7 @@ async function addUser(user: IUser) {
         const userSaved = userRepository.addUser(user);
 
         if (!userSaved)
-            throw new BadRequestError("No se pudo guardar el usuario");
+            throw new BadRequestError("No se pudo registrar el usuario");
 
         return userSaved;
     } catch (error) {
@@ -81,6 +81,7 @@ async function changeverifiedUser(id: string) {
         throw error;
     }
 }
+
 async function deleteUser(id: string) {
     try {
         const userDeleted = await userRepository.deleteUser(id);
@@ -94,6 +95,19 @@ async function deleteUser(id: string) {
     }
 }
 
+async function findUserByUsername(username: string) {
+    try {
+        const userFound = await userRepository.findUserByUsername(username);
+
+        if (!userFound)
+            throw new BadRequestError("Nombre de usuario no encontrado");
+
+        return userFound;
+    } catch (error) {
+        throw error;
+    }
+}
+
 export default {
     getUser,
     addUser,
@@ -101,4 +115,5 @@ export default {
     deleteUser,
     getFilteredUsers,
     updateUser,
+    findUserByUsername,
 };
