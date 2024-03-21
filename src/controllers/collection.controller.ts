@@ -1,51 +1,40 @@
-import { Response } from "express";
+import { NextFunction, Response } from "express";
 import { IdParams, TypedRequest } from "../types/request";
 import { ICollectionDTO } from "../types/collection";
 import { apiResponse } from "../libs/response.handle";
 import { StatusCodes } from "http-status-codes";
-import CollectionModel from "../models/collection.model";
 import { isValidId } from "../libs/validObjectId";
 import { getOrderByRecents } from "../query/orderByRecents.query";
 import { getQueryCollectionOr } from "../query/collection.query";
+import collectionService from "../services/collection.service";
+import { BadRequestError } from "../libs/api.errors";
 
 const getCollection = async (
     req: TypedRequest<ICollectionDTO, IdParams>,
-    res: Response
+    res: Response,
+    next: NextFunction
 ) => {
     const { id } = req.params;
 
-    if (!isValidId(id))
-        return apiResponse(res, {
-            status: StatusCodes.BAD_REQUEST,
-            message: "Id ingresado inválido",
-        });
+    if (!isValidId(id)) next(new BadRequestError("Id inválido"));
 
     try {
-        const collectionFound = await CollectionModel.findById(id);
-
-        if (!collectionFound) {
-            return apiResponse(res, {
-                status: StatusCodes.NO_CONTENT,
-                message: "Colección no encontrada",
-            });
-        }
+        const collection = await collectionService.getById(id);
 
         return apiResponse(res, {
             status: StatusCodes.OK,
             message: "Colección encontrada",
-            data: collectionFound,
+            data: collection,
         });
     } catch (error) {
-        return apiResponse(res, {
-            status: StatusCodes.INTERNAL_SERVER_ERROR,
-            message: error as string,
-        });
+        next(error);
     }
 };
 
 const getCollectionsQuery = async (
     req: TypedRequest<ICollectionDTO, IdParams>,
-    res: Response
+    res: Response,
+    next: NextFunction
 ) => {
     // Opciones de paginación de datos
     const options = {
@@ -55,147 +44,90 @@ const getCollectionsQuery = async (
 
     // Query para el filtrado de datos
     const query = getQueryCollectionOr(req);
+    const recents = getOrderByRecents(req);
 
     try {
         // Busco los datos y los pagino
-        const collections = await CollectionModel.paginate(query, {
-            ...options,
-            sort: { createdAt: getOrderByRecents(req) }, // Ordenar los datos por más recientes o antiguos
-        });
-
-        // excluyo los datos que no quiero enviar en el response
-        const { docs, offset, meta, totalDocs, ...restData } = collections;
+        const { data, pagination } = await collectionService.getFilteredQuery(
+            query,
+            recents,
+            options
+        );
 
         return apiResponse(res, {
             status: StatusCodes.OK,
-            message: totalDocs > 0 ? "Datos encontrados" : "Sin datos",
-            data: collections.docs,
-            pagination: {
-                totalData: collections.totalDocs,
-                ...restData,
-            },
+            message:
+                pagination.totalData > 0 ? "Datos encontrados" : "Sin datos",
+            data,
+            pagination,
         });
     } catch (error) {
-        return apiResponse(res, {
-            status: StatusCodes.INTERNAL_SERVER_ERROR,
-            message: error as string,
-        });
+        next(error);
     }
 };
 
 const addCollection = async (
     req: TypedRequest<ICollectionDTO, IdParams>,
-    res: Response
+    res: Response,
+    next: NextFunction
 ) => {
-    // Verifico que el ID del usuario enviado sea válido
-    if (!isValidId(req.body.user))
-        return apiResponse(res, {
-            status: StatusCodes.BAD_REQUEST,
-            message: "Id usuario inválido",
-        });
-
-    // instanciar un Collection con losd atos recibidos en el body
-    const newCollection = new CollectionModel(req.body);
+    if (!req.body) next(new BadRequestError("No se proporcionaron datos"));
 
     try {
         // guardo la instancia en la BD
-        const collectionSaved = await newCollection.save();
-
-        // Verifico que se haya guardado el nuevo objeto
-        if (!collectionSaved)
-            return apiResponse(res, {
-                status: StatusCodes.BAD_REQUEST,
-                message: "Colección no guardada",
-            });
+        const collection = await collectionService.saveCollection(req.body);
 
         return apiResponse(res, {
             status: StatusCodes.OK,
             message: "Colección guardada",
-            data: collectionSaved,
+            data: collection,
         });
     } catch (error) {
-        return apiResponse(res, {
-            status: StatusCodes.INTERNAL_SERVER_ERROR,
-            message: error as string,
-        });
+        next(error);
     }
 };
 
 const updateCollection = async (
     req: TypedRequest<ICollectionDTO, IdParams>,
-    res: Response
+    res: Response,
+    next: NextFunction
 ) => {
     const { id } = req.params;
 
-    if (!isValidId(id))
-        return apiResponse(res, {
-            status: StatusCodes.BAD_REQUEST,
-            message: "ID ingresado inválido",
-        });
-
-    if (!isValidId(req.body.user))
-        return apiResponse(res, {
-            status: StatusCodes.BAD_REQUEST,
-            message: "Id de usuario inválido",
-        });
+    if (!isValidId(id)) next(new BadRequestError("Id inválido"));
 
     try {
-        const collectionUpdated = await CollectionModel.findByIdAndUpdate(
-            id,
-            req.body,
-            { new: true }
-        );
-
-        if (!collectionUpdated)
-            return apiResponse(res, {
-                status: StatusCodes.BAD_REQUEST,
-                message: "Colección no actualizada",
-            });
+        const collection = collectionService.updateCollection(req.body, id);
 
         return apiResponse(res, {
             status: StatusCodes.OK,
             message: "Colección actualizada",
-            data: collectionUpdated,
+            data: collection,
         });
     } catch (error) {
-        return apiResponse(res, {
-            status: StatusCodes.INTERNAL_SERVER_ERROR,
-            message: error as string,
-        });
+        next(error);
     }
 };
 
 const deleteCollection = async (
     req: TypedRequest<ICollectionDTO, IdParams>,
-    res: Response
+    res: Response,
+    next: NextFunction
 ) => {
     const { id } = req.params;
 
-    if (!isValidId(id))
-        return apiResponse(res, {
-            status: StatusCodes.BAD_REQUEST,
-            message: "Id ingresado inválido",
-        });
+    if (!isValidId(id)) next(new BadRequestError("Id inválido"));
 
     try {
-        const collectionDeleted = await CollectionModel.findByIdAndDelete(id);
-
-        if (!collectionDeleted)
-            return apiResponse(res, {
-                status: StatusCodes.BAD_REQUEST,
-                message: "Colección no eliminada, no existe",
-            });
+        const collection = await collectionService.deleteCollection(id);
 
         return apiResponse(res, {
             status: StatusCodes.OK,
             message: "Colección eliminada",
-            data: collectionDeleted,
+            data: collection,
         });
     } catch (error) {
-        return apiResponse(res, {
-            status: StatusCodes.INTERNAL_SERVER_ERROR,
-            message: error as string,
-        });
+        next(error);
     }
 };
 
