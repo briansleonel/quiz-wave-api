@@ -7,29 +7,29 @@ import { collectionSchema } from "../schemas/collection.schema";
 const collectionRouter = Router();
 
 collectionRouter.get(
-    "/collection",
+    "/collections",
     authRequired,
     collectionController.getCollectionsQuery
 );
 collectionRouter.get(
-    "/collection/:id",
+    "/collections/:id",
     authRequired,
     collectionController.getCollection
 );
 collectionRouter.post(
-    "/collection",
+    "/collections",
     authRequired,
     validateSchema(collectionSchema),
     collectionController.addCollection
 );
 collectionRouter.put(
-    "/collection/:id",
+    "/collections/:id",
     authRequired,
     validateSchema(collectionSchema),
     collectionController.updateCollection
 );
 collectionRouter.delete(
-    "/collection/:id",
+    "/collections/:id",
     authRequired,
     collectionController.deleteCollection
 );

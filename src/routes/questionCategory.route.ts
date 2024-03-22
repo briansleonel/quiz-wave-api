@@ -8,25 +8,25 @@ import { validateRoleAdmin } from "../middlewares/validateRole.middleware";
 const questionCategoryRouter = Router();
 
 questionCategoryRouter.get(
-    "/category",
+    "/categories",
     authRequired,
     questionCategoryController.getAllQuery
 );
 
 questionCategoryRouter.get(
-    "/all/category",
+    "/all/categories",
     authRequired,
     questionCategoryController.getAllQuery
 );
 
 questionCategoryRouter.get(
-    "/category/:id",
+    "/categories/:id",
     authRequired,
     questionCategoryController.getCategory
 );
 
 questionCategoryRouter.post(
-    "/category",
+    "/categories",
     authRequired,
     validateRoleAdmin,
     validateSchema(categorySchema),
@@ -34,7 +34,7 @@ questionCategoryRouter.post(
 );
 
 questionCategoryRouter.put(
-    "/category/:id",
+    "/categories/:id",
     authRequired,
     validateRoleAdmin,
     validateSchema(categorySchema),
@@ -42,7 +42,7 @@ questionCategoryRouter.put(
 );
 
 questionCategoryRouter.delete(
-    "/category/:id",
+    "/categories/:id",
     authRequired,
     validateRoleAdmin,
     questionCategoryController.deleteCategory

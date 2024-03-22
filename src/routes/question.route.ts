@@ -10,23 +10,23 @@ import {
 
 const questionRouter = Router();
 
-questionRouter.get("/question", authRequired, questionController.getAll);
+questionRouter.get("/questions", authRequired, questionController.getAll);
 
 questionRouter.get(
-    "/question/:id",
+    "/questions/:id",
     authRequired,
     questionController.getQuestion
 );
 
 questionRouter.post(
-    "/question",
+    "/questions",
     authRequired,
     validateSchema(questionSchema),
     questionController.addQuestion
 );
 
 questionRouter.put(
-    "/question/:id",
+    "/questions/:id",
     authRequired,
     valiateRoleUserQuestion,
     validateSchema(questionSchema),
@@ -34,14 +34,14 @@ questionRouter.put(
 );
 
 questionRouter.delete(
-    "/question/:id",
+    "/questions/:id",
     valiateRoleUserQuestion,
     authRequired,
     questionController.deleteQuestion
 );
 
 questionRouter.put(
-    "/question/verified/:id",
+    "/questions/verified/:id",
     authRequired,
     validateRoleAdmin,
     questionController.changeVerified
