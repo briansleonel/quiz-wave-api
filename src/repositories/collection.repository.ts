@@ -1,9 +1,14 @@
+import { BadRequestError } from "../libs/api.errors";
 import CollectionModel from "../models/collection.model";
 import { ICollectionDTO } from "../types/collection";
 import { IPagiginOptions } from "../types/pagination";
 
 async function getById(id: string) {
-    return await CollectionModel.findById(id);
+    const collection = await CollectionModel.findById(id);
+
+    if (!collection) throw new BadRequestError("Colección no encontrada");
+
+    return collection;
 }
 
 async function getFilteredQuery(
@@ -24,9 +29,22 @@ async function saveCollection(collection: ICollectionDTO) {
 }
 
 async function updateCollection(collection: ICollectionDTO, id: string) {
-    return await CollectionModel.findByIdAndUpdate(id, collection, {
-        new: true,
-    });
+    try {
+        const collectionUpdated = await CollectionModel.findByIdAndUpdate(
+            id,
+            collection,
+            {
+                new: true,
+            }
+        );
+
+        console.log(collectionUpdated);
+
+        return collectionUpdated;
+    } catch (error) {
+        if (error instanceof Error) throw new BadRequestError(error.message);
+        throw error;
+    }
 }
 
 async function deleteCollection(id: string) {

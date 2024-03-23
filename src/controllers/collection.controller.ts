@@ -97,7 +97,10 @@ const updateCollection = async (
     if (!isValidId(id)) next(new BadRequestError("Id inválido"));
 
     try {
-        const collection = collectionService.updateCollection(req.body, id);
+        const collection = await collectionService.updateCollection(
+            req.body,
+            id
+        );
 
         return apiResponse(res, {
             status: StatusCodes.OK,

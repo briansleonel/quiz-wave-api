@@ -6,12 +6,7 @@ import { IPagiginOptions } from "../types/pagination";
 
 async function getById(id: string) {
     try {
-        const collectionFound = collectionRepository.getById(id);
-
-        if (!collectionFound)
-            throw new BadRequestError("Colección no encontrada");
-
-        return collectionFound;
+        return collectionRepository.getById(id);
     } catch (error) {
         throw error;
     }
@@ -71,7 +66,9 @@ async function updateCollection(collection: ICollectionDTO, id: string) {
             id
         );
 
-        if (!collection)
+        console.log(collectionUpdated);
+
+        if (!collectionUpdated)
             throw new BadRequestError("No se pudo actualizar la colección");
 
         return collectionUpdated;
@@ -82,7 +79,9 @@ async function updateCollection(collection: ICollectionDTO, id: string) {
 
 async function deleteCollection(id: string) {
     try {
-        const collectionDeleted = collectionRepository.deleteCollection(id);
+        const collectionDeleted = await collectionRepository.deleteCollection(
+            id
+        );
 
         if (!collectionDeleted)
             throw new BadRequestError("No se pudo eliminar la colección");
