@@ -1,3 +1,4 @@
+import { BadRequestError } from "../libs/api.errors";
 import UserModel from "../models/user.model";
 import { IPagiginOptions } from "../types/pagination";
 import { IUser } from "../types/user";
@@ -11,8 +12,25 @@ async function getFilteredUsers(query: any, options: IPagiginOptions) {
     return await UserModel.paginate(query, options);
 }
 async function addUser(user: IUser) {
-    const newUser = new UserModel(user);
-    return await newUser.save();
+    try {
+        const newUser = new UserModel(user);
+        return await newUser.save();
+    } catch (error) {
+        if (error instanceof Error) {
+            const errDuplicateKey = error.message.split(" ")[0];
+
+            if (errDuplicateKey === "E11000")
+                if (error.message.includes("username"))
+                    throw new BadRequestError(
+                        "Nombre de usuario no disponible"
+                    );
+                else if (error.message.includes("email"))
+                    throw new BadRequestError("Este email ya está en uso");
+                else throw new BadRequestError("Claves duplicadas");
+        }
+
+        throw error;
+    }
 }
 async function updateUser(user: IUser, id: string) {
     const userFound = await UserModel.findByIdAndUpdate(id, user, {
