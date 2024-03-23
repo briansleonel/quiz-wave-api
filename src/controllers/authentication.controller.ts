@@ -27,6 +27,9 @@ const login = async (
     try {
         const { token, user } = await authService.login(username, password);
 
+        // envío el token en header
+        res.setHeader("Authorization", "Bearer " + token);
+
         return apiResponse(res, {
             status: StatusCodes.OK,
             message: "Ha iniciado sesión",
@@ -51,7 +54,10 @@ const login = async (
  * @returns la respuesta a la petición
  */
 const logout = async (_req: Request, res: Response) => {
-    res.cookie("token", "", { expires: new Date(0) });
+    //res.cookie("token", "", { expires: new Date(0) });
+
+    // remuevo el header de autorización
+    res.removeHeader("Authorization");
 
     return apiResponse(res, {
         status: StatusCodes.OK,
@@ -76,6 +82,9 @@ const register = async (
     try {
         const { token, user } = await authService.register(req.body);
 
+        // envío el token en header
+        res.setHeader("Authorization", "Bearer " + token);
+
         return apiResponse(res, {
             status: StatusCodes.CREATED,
             data: {
@@ -85,7 +94,7 @@ const register = async (
                 fullName: `${user.lastName}, ${user.firstName}`,
                 token,
             },
-            message: "Se ha creado su cuenta",
+            message: "Cuenta creada",
         });
     } catch (err) {
         next(err);
