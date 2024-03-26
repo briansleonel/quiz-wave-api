@@ -14,12 +14,6 @@ questionCategoryRouter.get(
 );
 
 questionCategoryRouter.get(
-    "/all/categories",
-    authRequired,
-    questionCategoryController.getAllQuery
-);
-
-questionCategoryRouter.get(
     "/categories/:id",
     authRequired,
     questionCategoryController.getCategory

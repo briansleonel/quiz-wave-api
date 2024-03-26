@@ -4,11 +4,7 @@ import { ICollectionDTO } from "../types/collection";
 import { IPagiginOptions } from "../types/pagination";
 
 async function getById(id: string) {
-    const collection = await CollectionModel.findById(id);
-
-    if (!collection) throw new BadRequestError("Colección no encontrada");
-
-    return collection;
+    return await CollectionModel.findById(id);
 }
 
 async function getFilteredQuery(
@@ -37,8 +33,6 @@ async function updateCollection(collection: ICollectionDTO, id: string) {
                 new: true,
             }
         );
-
-        console.log(collectionUpdated);
 
         return collectionUpdated;
     } catch (error) {

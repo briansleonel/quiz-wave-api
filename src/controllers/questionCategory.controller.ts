@@ -1,16 +1,11 @@
-import { Response } from "express";
+import { NextFunction, Response } from "express";
 import { StatusCodes } from "http-status-codes";
-
-import QuestionCategoryModel from "../models/questionCategory.model";
 import { apiResponse } from "../libs/response.handle";
 import { isValidId } from "../libs/validObjectId";
-import {
-    IdParams,
-    TypedRequest,
-    //TypedRequestBody,
-    //TypedRequestParams,
-} from "../types/request";
+import { IdParams, TypedRequest } from "../types/request";
 import { IQuestionCategory } from "../types/questionCategory";
+import { BadRequestError } from "../libs/api.errors";
+import questionCategoryService from "../services/questionCategory.service";
 
 /**
  * Permite realizar la consulta de una "Category" en la BD, a partir de un determinado :id, recibido a través del req.params
@@ -21,42 +16,24 @@ import { IQuestionCategory } from "../types/questionCategory";
  */
 const getCategory = async (
     req: TypedRequest<IQuestionCategory, IdParams>,
-    res: Response
+    res: Response,
+    next: NextFunction
 ) => {
     const { id } = req.params;
 
-    if (!isValidId(id))
-        // verifica si el :id ingresado es valido
-        return apiResponse(res, {
-            // status : StatusCodes.NO_CONTENT,
-            status: StatusCodes.BAD_REQUEST,
-            data: null,
-            message: "Id inválido",
-        });
+    if (!isValidId(id)) next(new BadRequestError("Id inválido"));
 
     try {
-        const categoryFound = await QuestionCategoryModel.findById(id);
-
-        if (!categoryFound)
-            // verifico si se encontró el dato
-            return apiResponse(res, {
-                status: StatusCodes.NO_CONTENT,
-                data: null,
-                message: "Categoría no encontrada",
-            });
+        const category = await questionCategoryService.getById(id);
 
         // envio el dato encontrado
         return apiResponse(res, {
             status: StatusCodes.OK,
-            data: categoryFound,
+            data: category,
             message: "Categoría encontrada",
         });
     } catch (err) {
-        return apiResponse(res, {
-            status: StatusCodes.INTERNAL_SERVER_ERROR,
-            data: null,
-            message: err as string,
-        });
+        next(err);
     }
 };
 
@@ -69,7 +46,8 @@ const getCategory = async (
  */
 const getAllQuery = async (
     req: TypedRequest<IQuestionCategory, IdParams>,
-    res: Response
+    res: Response,
+    next: NextFunction
 ) => {
     const query = {};
     const options = {
@@ -79,50 +57,21 @@ const getAllQuery = async (
 
     try {
         // Busco los datos y los pagino
-        const categories = await QuestionCategoryModel.paginate(query, options);
+        const categories = await questionCategoryService.getByQuery(
+            query,
+            options
+        );
 
-        // excluyo los datos que no quiero enviar en el response
-        const { docs, offset, meta, totalDocs, ...restData } = categories;
-
-        //console.log(restData);
-
-        return apiResponse(res, {
-            status: StatusCodes.OK,
-            data: categories.docs,
-            message: "Datos encontrados",
-            pagination: {
-                totalData: categories.totalDocs,
-                ...restData,
-            },
-        });
-    } catch (err) {
-        return apiResponse(res, {
-            status: StatusCodes.INTERNAL_SERVER_ERROR,
-            data: null,
-            message: err as string,
-        });
-    }
-};
-
-const getAll = async (
-    _req: TypedRequest<IQuestionCategory, IdParams>,
-    res: Response
-) => {
-    try {
-        // Busco los datos y los pagino
-        const categories = await QuestionCategoryModel.find({});
+        const { data, pagination } = categories;
 
         return apiResponse(res, {
             status: StatusCodes.OK,
-            data: categories,
+            data,
             message: "Datos encontrados",
+            pagination,
         });
     } catch (err) {
-        return apiResponse(res, {
-            status: StatusCodes.INTERNAL_SERVER_ERROR,
-            data: null,
-            message: err as string,
-        });
+        next(err);
     }
 };
 
@@ -135,32 +84,22 @@ const getAll = async (
  */
 const addCategory = async (
     req: TypedRequest<IQuestionCategory, IdParams>,
-    res: Response
+    res: Response,
+    next: NextFunction
 ) => {
     // Verifico que se envien los datos en el body
-    if (!req.body)
-        return apiResponse(res, {
-            status: StatusCodes.BAD_REQUEST,
-            data: null,
-            message: "Sin datos",
-        });
-
-    const newCategory = new QuestionCategoryModel(req.body);
+    if (!req.body) next(new BadRequestError("No se proporcionaron datos"));
 
     try {
-        const categorySaved = await newCategory.save();
+        const category = await questionCategoryService.saveCategory(req.body);
 
         return apiResponse(res, {
             status: StatusCodes.CREATED,
-            data: categorySaved,
+            data: category,
             message: "Categoría guardada",
         });
     } catch (err) {
-        return apiResponse(res, {
-            status: StatusCodes.INTERNAL_SERVER_ERROR,
-            data: null,
-            message: err as string,
-        });
+        next(err);
     }
 };
 
@@ -173,46 +112,30 @@ const addCategory = async (
  */
 const updateCategory = async (
     req: TypedRequest<IQuestionCategory, IdParams>,
-    res: Response
+    res: Response,
+    next: NextFunction
 ) => {
     const { id } = req.params;
 
+    if (!isValidId(id)) next(new BadRequestError("Id inválido"));
+
     // Verifico que se envien los datos en el body
     if (!req.body)
-        return apiResponse(res, {
-            status: StatusCodes.BAD_REQUEST,
-            data: null,
-            message: "Sin datos",
-        });
+        next(new BadRequestError("No se proporcionaron datos válidos"));
 
     try {
-        const categoryFound = await QuestionCategoryModel.findByIdAndUpdate(
-            id,
+        const category = await questionCategoryService.updateCategory(
             req.body,
-            {
-                new: true, // Indicio que me devuelva el objeto actualizado
-            }
+            id
         );
-
-        if (!categoryFound)
-            // verifico si se encontró alguna categoría
-            return apiResponse(res, {
-                status: StatusCodes.NO_CONTENT,
-                data: null,
-                message: "Categoría no ecnontrada",
-            });
 
         return apiResponse(res, {
             status: StatusCodes.OK,
-            data: categoryFound,
+            data: category,
             message: "Categoría actualizada",
         });
     } catch (err) {
-        return apiResponse(res, {
-            status: StatusCodes.INTERNAL_SERVER_ERROR,
-            data: null,
-            message: err as string,
-        });
+        next(err);
     }
 };
 
@@ -224,31 +147,23 @@ const updateCategory = async (
  */
 const deleteCategory = async (
     req: TypedRequest<IQuestionCategory, IdParams>,
-    res: Response
+    res: Response,
+    next: NextFunction
 ) => {
     const { id } = req.params;
 
-    try {
-        const categoryFound = await QuestionCategoryModel.findByIdAndDelete(id);
+    if (!isValidId(id)) next(new BadRequestError("Id inválido"));
 
-        if (!categoryFound)
-            return apiResponse(res, {
-                status: StatusCodes.NO_CONTENT,
-                data: null,
-                message: "Categoría no ecnontrada",
-            });
+    try {
+        const category = await questionCategoryService.deleteCategory(id);
 
         return apiResponse(res, {
             status: StatusCodes.OK,
-            data: categoryFound,
+            data: category,
             message: "Categoría eliminada",
         });
     } catch (err) {
-        return apiResponse(res, {
-            status: StatusCodes.INTERNAL_SERVER_ERROR,
-            data: null,
-            message: err as string,
-        });
+        next(err);
     }
 };
 
@@ -258,7 +173,6 @@ const questionCategoryController = {
     getCategory,
     updateCategory,
     deleteCategory,
-    getAll,
 };
 
 export default questionCategoryController;

@@ -6,7 +6,11 @@ import { IPagiginOptions } from "../types/pagination";
 
 async function getById(id: string) {
     try {
-        return collectionRepository.getById(id);
+        const collection = await collectionRepository.getById(id);
+
+        if (!collection) throw new BadRequestError("Colección no encontrada");
+
+        return collection;
     } catch (error) {
         throw error;
     }
@@ -65,8 +69,6 @@ async function updateCollection(collection: ICollectionDTO, id: string) {
             collection,
             id
         );
-
-        console.log(collectionUpdated);
 
         if (!collectionUpdated)
             throw new BadRequestError("No se pudo actualizar la colección");
