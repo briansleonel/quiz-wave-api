@@ -1,12 +1,13 @@
-import { Response } from "express";
+import { NextFunction, Response } from "express";
 import { StatusCodes } from "http-status-codes";
 import { IdParams, TypedRequest } from "../types/request";
 import { isValidId } from "../libs/validObjectId";
 import { apiResponse } from "../libs/response.handle";
-import QuestionModel from "../models/question.model";
 import { getQueryQuestionOr } from "../query/question.query";
 import { IQuestion, IQuestionDTO } from "../types/question";
 import { getOrderByRecents } from "../query/orderByRecents.query";
+import { BadRequestError } from "../libs/api.errors";
+import questionService from "../services/question.service";
 
 /**
  * Permite devolver una Pregunta, de acuerdo a la coincidencia con algún ID
@@ -17,36 +18,23 @@ import { getOrderByRecents } from "../query/orderByRecents.query";
  */
 const getQuestion = async (
     req: TypedRequest<IQuestion, IdParams>,
-    res: Response
+    res: Response,
+    next: NextFunction
 ) => {
     const { id } = req.params;
 
-    if (!isValidId(id))
-        return apiResponse(res, {
-            status: StatusCodes.BAD_REQUEST,
-            message: "Id inválido",
-        });
+    if (!isValidId(id)) next(new BadRequestError("Id inválido"));
 
     try {
-        const questionFound = await QuestionModel.findById(id).populate(
-            "category"
-        );
-        if (!questionFound)
-            return apiResponse(res, {
-                status: StatusCodes.NO_CONTENT,
-                message: "Pregunta no encontrada",
-            });
+        const question = await questionService.getById(id);
 
         return apiResponse(res, {
             status: StatusCodes.OK,
             message: "Pregunta encontrado",
-            data: questionFound,
+            data: question,
         });
     } catch (err) {
-        return apiResponse(res, {
-            status: StatusCodes.INTERNAL_SERVER_ERROR,
-            message: err as string,
-        });
+        next(err);
     }
 };
 
@@ -59,7 +47,8 @@ const getQuestion = async (
  */
 const getAll = async (
     req: TypedRequest<IQuestion, IdParams>,
-    res: Response
+    res: Response,
+    next: NextFunction
 ) => {
     const options = {
         page: req.query.page ? Number(req.query.page) : 1,
@@ -68,36 +57,25 @@ const getAll = async (
 
     const query = getQueryQuestionOr(req);
 
+    const recents = getOrderByRecents(req);
+
     try {
         // Busco los datos y los pagino
-        const questions = await QuestionModel.paginate(query, {
-            ...options,
-            populate: [
-                { path: "category" },
-                //{ path: "user", select: "username" },
-            ],
-            sort: {
-                createdAt: getOrderByRecents(req),
-            },
-        });
-
-        // excluyo los datos que no quiero enviar en el response
-        const { docs, offset, meta, totalDocs, ...restData } = questions;
+        const { data, pagination } = await questionService.getByQuery(
+            query,
+            options,
+            recents
+        );
 
         return apiResponse(res, {
             status: StatusCodes.OK,
-            message: totalDocs > 0 ? "Datos encontrados" : "Sin datos",
-            data: questions.docs,
-            pagination: {
-                totalData: questions.totalDocs,
-                ...restData,
-            },
+            message:
+                pagination.totalData > 0 ? "Datos encontrados" : "Sin datos",
+            data,
+            pagination,
         });
     } catch (err) {
-        return apiResponse(res, {
-            status: StatusCodes.INTERNAL_SERVER_ERROR,
-            message: err as string,
-        });
+        next(err);
     }
 };
 
@@ -110,41 +88,27 @@ const getAll = async (
  */
 const addQuestion = async (
     req: TypedRequest<IQuestionDTO, IdParams>,
-    res: Response
+    res: Response,
+    next: NextFunction
 ) => {
-    if (!req.body)
-        return apiResponse(res, {
-            status: StatusCodes.BAD_REQUEST,
-            message: "Sin datos",
-        });
+    if (!req.body) next(new BadRequestError("No se proporcionaron datos"));
 
     if (!isValidId(req.body.user))
-        return apiResponse(res, {
-            status: StatusCodes.BAD_REQUEST,
-            message: "Id usuario inválido",
-        });
+        next(new BadRequestError("Id de usuario inválido"));
 
     if (!isValidId(req.body.category))
-        return apiResponse(res, {
-            status: StatusCodes.BAD_REQUEST,
-            message: "Id categoría inválido",
-        });
-
-    const newQuestion = new QuestionModel(req.body);
+        next(new BadRequestError("Id de categoría inválido"));
 
     try {
-        const questionSaved = await newQuestion.save();
+        const question = await questionService.saveQuestion(req.body);
 
         return apiResponse(res, {
             status: StatusCodes.OK,
             message: "Pregunta guardada",
-            data: questionSaved,
+            data: question,
         });
     } catch (err) {
-        return apiResponse(res, {
-            status: StatusCodes.INTERNAL_SERVER_ERROR,
-            message: err as string,
-        });
+        next(err);
     }
 };
 
@@ -157,56 +121,31 @@ const addQuestion = async (
  */
 const updateQuestion = async (
     req: TypedRequest<IQuestionDTO, IdParams>,
-    res: Response
+    res: Response,
+    next: NextFunction
 ) => {
     const { id } = req.params;
 
-    if (!isValidId(id))
-        return apiResponse(res, {
-            status: StatusCodes.BAD_REQUEST,
-            message: "Id inválido",
-        });
+    if (!isValidId(id)) next(new BadRequestError("Id inválido"));
 
-    if (!req.body)
-        return apiResponse(res, {
-            status: StatusCodes.BAD_REQUEST,
-            message: "Sin datos",
-        });
+    if (!req.body) next(new BadRequestError("No se proporcionaron datos"));
 
     if (!isValidId(req.body.user))
-        return apiResponse(res, {
-            status: StatusCodes.BAD_REQUEST,
-            message: "Id usuario inválido",
-        });
+        next(new BadRequestError("Id de usuario inválido"));
 
     if (!isValidId(req.body.category))
-        return apiResponse(res, {
-            status: StatusCodes.BAD_REQUEST,
-            message: "Id categoría inválido",
-        });
+        next(new BadRequestError("Id de categoría inválido"));
 
     try {
-        const questionUpdated = await QuestionModel.findByIdAndUpdate(
-            id,
-            req.body,
-            { new: true }
-        );
-        if (!questionUpdated)
-            return apiResponse(res, {
-                status: StatusCodes.BAD_REQUEST,
-                message: "Pregunta no guardada",
-            });
+        const question = await questionService.updateQuestion(req.body, id);
 
         return apiResponse(res, {
             status: StatusCodes.OK,
             message: "Pregunta actualizada",
-            data: questionUpdated,
+            data: question,
         });
     } catch (err) {
-        return apiResponse(res, {
-            status: StatusCodes.INTERNAL_SERVER_ERROR,
-            message: err as string,
-        });
+        next(err);
     }
 };
 
@@ -219,76 +158,44 @@ const updateQuestion = async (
  */
 const deleteQuestion = async (
     req: TypedRequest<IQuestionDTO, IdParams>,
-    res: Response
+    res: Response,
+    next: NextFunction
 ) => {
     const { id } = req.params;
 
-    if (!isValidId(id))
-        return apiResponse(res, {
-            status: StatusCodes.BAD_REQUEST,
-            message: "Id inválido",
-        });
+    if (!isValidId(id)) next(new BadRequestError("Id inválido"));
 
     try {
-        const questionDeleted = await QuestionModel.findByIdAndDelete(id);
-        if (!questionDeleted)
-            return apiResponse(res, {
-                status: StatusCodes.BAD_REQUEST,
-                message: "Pregunta no eliminada",
-            });
+        const question = await questionService.deleteQuestion(id);
 
         return apiResponse(res, {
             status: StatusCodes.OK,
             message: "Pregunta eliminada",
-            data: questionDeleted,
+            data: question,
         });
     } catch (err) {
-        return apiResponse(res, {
-            status: StatusCodes.INTERNAL_SERVER_ERROR,
-            message: err as string,
-        });
+        next(err);
     }
 };
 
 const changeVerified = async (
     req: TypedRequest<IQuestionDTO, IdParams>,
-    res: Response
+    res: Response,
+    next: NextFunction
 ) => {
     const { id } = req.params;
 
-    // Verifico que el ID sea un ID de mongoose válido
-    if (!isValidId(id))
-        return apiResponse(res, {
-            status: StatusCodes.BAD_REQUEST,
-            message: "Id inválido",
-        });
+    if (!isValidId(id)) next(new BadRequestError("Id inválido"));
 
     try {
-        const questionFound = await QuestionModel.findById(id);
-
-        if (!questionFound)
-            return apiResponse(res, {
-                status: StatusCodes.NO_CONTENT,
-                message: "Pregunta no encontrado",
-            });
-
-        await QuestionModel.findByIdAndUpdate(
-            id,
-            { verified: !questionFound?.verified },
-            {
-                new: true,
-            }
-        );
+        await questionService.changeVerified(id);
 
         return apiResponse(res, {
             status: StatusCodes.OK,
             message: "Verificación actualizada",
         });
     } catch (err) {
-        return apiResponse(res, {
-            status: StatusCodes.INTERNAL_SERVER_ERROR,
-            message: err as string,
-        });
+        next(err);
     }
 };
 

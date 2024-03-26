@@ -4,10 +4,6 @@ import { IQuestionCategory } from "../types/questionCategory";
 
 async function getById(id: string) {
     return await QuestionCategoryModel.findById(id);
-
-    //if (!category) throw new BadRequestError("Categoría no encontrada");
-
-    //return category
 }
 async function getByQuery(query: any, options: IPagiginOptions) {
     return await QuestionCategoryModel.paginate(query, options);
