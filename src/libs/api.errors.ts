@@ -33,6 +33,12 @@ export class InternalServerError extends ApiResponseError {
     }
 }
 
+export class ForbiddenError extends ApiResponseError {
+    constructor(message: string = "Forbidden") {
+        super(StatusCodes.FORBIDDEN, message);
+    }
+}
+
 export class ApiErrorFactory {
     static createNotFoundError(message: string): NotFoundError {
         return new NotFoundError(message);
