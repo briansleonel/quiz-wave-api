@@ -1,4 +1,4 @@
-import { BadRequestError } from "../libs/api.errors";
+import { BadRequestError, NotFoundError } from "../libs/api.errors";
 import userRepository from "../repositories/user.repository";
 import { IPagiginOptions } from "../types/pagination";
 import { IUser } from "../types/user";
@@ -8,7 +8,7 @@ async function getUser(id: string) {
         const userFound = await userRepository.getUser(id);
 
         if (!userFound) {
-            throw new BadRequestError("Usuario no encontrado");
+            throw new NotFoundError("Usuario no encontrado");
         }
 
         return userFound;

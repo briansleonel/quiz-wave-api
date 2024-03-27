@@ -1,4 +1,4 @@
-import { BadRequestError } from "../libs/api.errors";
+import { BadRequestError, NotFoundError } from "../libs/api.errors";
 import questionCategoryRepository from "../repositories/questionCategory.repository";
 import { IPagiginOptions } from "../types/pagination";
 import { IQuestionCategory } from "../types/questionCategory";
@@ -8,7 +8,7 @@ async function getById(id: string) {
         const categoryFound = await questionCategoryRepository.getById(id);
 
         if (!categoryFound)
-            throw new BadRequestError("Categoría no encontrada");
+            throw new NotFoundError("Categoría no encontrada");
 
         return categoryFound;
     } catch (error) {

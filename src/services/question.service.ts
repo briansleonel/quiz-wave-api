@@ -1,4 +1,4 @@
-import { BadRequestError } from "../libs/api.errors";
+import { BadRequestError, NotFoundError } from "../libs/api.errors";
 import questionRepository from "../repositories/question.repository";
 import { IPagiginOptions } from "../types/pagination";
 import { IQuestionDTO } from "../types/question";
@@ -7,7 +7,7 @@ async function getById(id: string) {
     try {
         const question = await questionRepository.getById(id);
 
-        if (!question) throw new BadRequestError("Pregunta no encontrada");
+        if (!question) throw new NotFoundError("Pregunta no encontrada");
 
         return question;
     } catch (error) {

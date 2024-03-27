@@ -1,4 +1,4 @@
-import { BadRequestError } from "../libs/api.errors";
+import { BadRequestError, NotFoundError } from "../libs/api.errors";
 import { isValidId } from "../libs/validObjectId";
 import collectionRepository from "../repositories/collection.repository";
 import { ICollectionDTO } from "../types/collection";
@@ -8,7 +8,7 @@ async function getById(id: string) {
     try {
         const collection = await collectionRepository.getById(id);
 
-        if (!collection) throw new BadRequestError("Colección no encontrada");
+        if (!collection) throw new NotFoundError("Colección no encontrada");
 
         return collection;
     } catch (error) {

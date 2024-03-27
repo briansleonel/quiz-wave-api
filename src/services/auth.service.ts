@@ -56,6 +56,9 @@ async function register(user: IUser) {
             password: passwordHashed,
         });
 
+        if (!userSaved)
+            throw new BadRequestError("No se pudo registrar el usuario");
+
         // Creo el token de acceso para el usuario logueado
         const token = await createAccessToken({
             id: userSaved._id,
