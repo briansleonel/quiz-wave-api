@@ -1,9 +1,8 @@
 import { NextFunction, Response } from "express";
 import jwt from "jsonwebtoken";
-import { StatusCodes } from "http-status-codes";
-import { apiResponse } from "../libs/response.handle";
 import config from "../config/config";
 import { IdParams, TypedRequest } from "../types/request";
+import { ForbiddenError, UnauthorizedError } from "../libs/api.errors";
 
 /**
  * Middleware que permite verificar si un "token" recibido en los Headers es válido
@@ -16,41 +15,35 @@ import { IdParams, TypedRequest } from "../types/request";
  */
 export function authRequired<T>(
     req: TypedRequest<T, IdParams>,
-    res: Response,
+    _res: Response,
     next: NextFunction
 ) {
-    /**********************************************************
-        Validación de token por header Authorization
-    **********************************************************/
+    try {
+        /**********************************************************
+            Validación de token por header Authorization
+        **********************************************************/
 
-    // Verifico que se envíe Authorization en los headers
-    if (!req.headers.authorization) {
-        return apiResponse(res, {
-            status: StatusCodes.UNAUTHORIZED,
-            message: "No Token: Autorización denegada",
+        // Verifico que se envíe Authorization en los headers
+        if (!req.headers.authorization) {
+            throw new UnauthorizedError("Autorización denegada");
+        }
+
+        // Extraigo el token del header Authorization - se espera formato -> Bearer XXX, interesa el token en posición 1
+        const token = req.headers.authorization.split(" ")[1];
+
+        // Verifico si existe algún token
+        if (!token) {
+            throw new UnauthorizedError("No token: Autorización denegada");
+        }
+
+        // Verifico que el token sea válido
+        jwt.verify(token, config.TOKEN_SECRET, (err: any) => {
+            if (err) throw new ForbiddenError("Token inválido");
+            return next();
         });
+    } catch (error) {
+        throw error;
     }
-
-    // Extraigo el token del header Authorization - se espera formato -> Bearer XXX, interesa el token en posición 1
-    const token = req.headers.authorization.split(" ")[1];
-
-    // Verifico si existe algún token
-    if (!token) {
-        return apiResponse(res, {
-            status: StatusCodes.UNAUTHORIZED,
-            message: "No Token: Autorización denegada",
-        });
-    }
-
-    // Verifico que el token sea válido
-    jwt.verify(token, config.TOKEN_SECRET, (err: any) => {
-        if (err)
-            return apiResponse(res, {
-                status: StatusCodes.FORBIDDEN,
-                message: "Token Inválido",
-            });
-        return next();
-    });
 
     /**********************************************************
         Validación de token por cookie
