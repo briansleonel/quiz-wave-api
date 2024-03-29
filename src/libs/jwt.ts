@@ -1,6 +1,8 @@
 import jwt from "jsonwebtoken";
 import config from "../config/config";
 import { Types } from "mongoose";
+import { UserPayload } from "../types/payload";
+import { IdParams, TypedRequest } from "../types/request";
 
 /**
  * Permite representar los datos que se incluiran en el token
@@ -38,4 +40,15 @@ export async function createAccessToken(payload: Payload) {
  */
 export function getUserDataToken(token: string) {
     return jwt.decode(token);
+}
+
+/**
+ * Permite decodificar los datos lamacenados en el Header de la solicitud y devolver los datos del mismo
+ * @param req request de la petición HTTP
+ * @returns los datos almacenados en el token
+ */
+export function getDataToken<T>(req: TypedRequest<T, IdParams>) {
+    const token = req.headers.authorization!.split(" ")[1];
+
+    return getUserDataToken(token) as UserPayload;
 }
