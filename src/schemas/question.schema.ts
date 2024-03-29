@@ -14,7 +14,8 @@ export const questionSchema = z.object({
         .refine(isValidId, { message: "Identificador de categoría no válido" }),
     user: z
         .string({ required_error: "El usuario es requerido" })
-        .refine(isValidId, { message: "Identificador de usuario no válido" }),
+        .refine(isValidId, { message: "Identificador de usuario no válido" })
+        .optional(),
     verified: z.boolean().optional(),
     description: z
         .string({ required_error: "La descripción es requerida" })
