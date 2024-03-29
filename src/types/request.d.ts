@@ -2,6 +2,7 @@ import { Request } from "express";
 import { Types } from "mongoose";
 import { Role } from "../libs/role.enum";
 import { IUserRequest } from "../interfaces/user";
+import { UserPayload } from "./payload";
 
 /**
  * Representa una Petición (Request) con un tipo de body y params tipados
@@ -9,6 +10,7 @@ import { IUserRequest } from "../interfaces/user";
 export interface TypedRequest<BODY, PARAMS> extends Request {
     body: BODY;
     params: PARAMS;
+    auth?: UserPayload;
 }
 
 export interface TypedRequestBody<T> extends Request {
@@ -28,5 +30,5 @@ export interface IdParams {
 
 export interface GameParams {
     category: string;
-    limit?: number
+    limit?: number;
 }

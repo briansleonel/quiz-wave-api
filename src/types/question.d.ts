@@ -21,7 +21,7 @@ export interface IQuestion extends Omit<ICollectionQuestion, "duration"> {
 
 export interface IQuestionDTO extends Omit<IQuestion, "category" | "user"> {
     category: string;
-    user: string;
+    user?: string;
 }
 
 export interface IQuestionWithId extends IQuestion {
