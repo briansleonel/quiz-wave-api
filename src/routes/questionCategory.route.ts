@@ -3,7 +3,7 @@ import questionCategoryController from "../controllers/questionCategory.controll
 import { authRequired } from "../middlewares/validateToken.middleware";
 import { validateSchema } from "../middlewares/validateSchema.middleware";
 import { categorySchema } from "../schemas/category.schema";
-import { validateRoleAdmin } from "../middlewares/validateRole.middleware";
+import { verifyRoleAdmin } from "../middlewares/validate-role/verifyRoleAdmin.middleware";
 
 const questionCategoryRouter = Router();
 
@@ -22,7 +22,7 @@ questionCategoryRouter.get(
 questionCategoryRouter.post(
     "/categories",
     authRequired,
-    validateRoleAdmin,
+    verifyRoleAdmin,
     validateSchema(categorySchema),
     questionCategoryController.addCategory
 );
@@ -30,7 +30,7 @@ questionCategoryRouter.post(
 questionCategoryRouter.put(
     "/categories/:id",
     authRequired,
-    validateRoleAdmin,
+    verifyRoleAdmin,
     validateSchema(categorySchema),
     questionCategoryController.updateCategory
 );
@@ -38,7 +38,7 @@ questionCategoryRouter.put(
 questionCategoryRouter.delete(
     "/categories/:id",
     authRequired,
-    validateRoleAdmin,
+    verifyRoleAdmin,
     questionCategoryController.deleteCategory
 );
 

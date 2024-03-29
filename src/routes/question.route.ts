@@ -3,10 +3,9 @@ import questionController from "../controllers/question.controller";
 import { authRequired } from "../middlewares/validateToken.middleware";
 import { validateSchema } from "../middlewares/validateSchema.middleware";
 import { questionSchema } from "../schemas/question.schema";
-import {
-    valiateRoleUserQuestion,
-    validateRoleAdmin,
-} from "../middlewares/validateRole.middleware";
+import { verifyRoleUserQuestion } from "../middlewares/validate-role/verifyRoleUserQuestion.middleware";
+import { verifyRoleAdmin } from "../middlewares/validate-role/verifyRoleAdmin.middleware";
+import { verifyIdParam } from "../middlewares/verifyIdParam.middleware";
 
 const questionRouter = Router();
 
@@ -28,22 +27,24 @@ questionRouter.post(
 questionRouter.put(
     "/questions/:id",
     authRequired,
-    valiateRoleUserQuestion,
+    verifyIdParam,
+    verifyRoleUserQuestion,
     validateSchema(questionSchema),
     questionController.updateQuestion
 );
 
 questionRouter.delete(
     "/questions/:id",
-    valiateRoleUserQuestion,
     authRequired,
+    verifyIdParam,
+    verifyRoleUserQuestion,
     questionController.deleteQuestion
 );
 
 questionRouter.put(
     "/questions/verified/:id",
     authRequired,
-    validateRoleAdmin,
+    verifyRoleAdmin,
     questionController.changeVerified
 );
 
