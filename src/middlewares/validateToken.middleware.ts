@@ -3,6 +3,8 @@ import jwt from "jsonwebtoken";
 import config from "../config/config";
 import { IdParams, TypedRequest } from "../types/request";
 import { ForbiddenError, UnauthorizedError } from "../libs/api.errors";
+import { getUserDataToken } from "../libs/jwt";
+import { UserPayload } from "../types/payload";
 
 /**
  * Middleware que permite verificar si un "token" recibido en los Headers es válido
@@ -39,6 +41,9 @@ export function authRequired<T>(
         // Verifico que el token sea válido
         jwt.verify(token, config.TOKEN_SECRET, (err: any) => {
             if (err) throw new ForbiddenError("Token inválido");
+
+            req.auth = getUserDataToken(token) as UserPayload;
+
             return next();
         });
     } catch (error) {
