@@ -9,23 +9,19 @@ import { verifyIdParam } from "../middlewares/verifyIdParam.middleware";
 const collectionRouter = Router();
 
 collectionRouter.get(
-    "/collections",
+    "/",
     authRequired,
     collectionController.getCollectionsQuery
 );
-collectionRouter.get(
-    "/collections/:id",
-    authRequired,
-    collectionController.getCollection
-);
+collectionRouter.get("/:id", authRequired, collectionController.getCollection);
 collectionRouter.post(
-    "/collections",
+    "/",
     authRequired,
     validateSchema(collectionSchema),
     collectionController.addCollection
 );
 collectionRouter.put(
-    "/collections/:id",
+    "/:id",
     authRequired,
     verifyIdParam,
     verifyRoleUserCollection,
@@ -33,7 +29,7 @@ collectionRouter.put(
     collectionController.updateCollection
 );
 collectionRouter.delete(
-    "/collections/:id",
+    "/:id",
     authRequired,
     verifyIdParam,
     verifyRoleUserCollection,

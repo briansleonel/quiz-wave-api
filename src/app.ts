@@ -3,13 +3,8 @@ import morgan from "morgan";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 
-import questionCategoryRouter from "./routes/questionCategory.route";
-import userRouter from "./routes/user.route";
-import questionRouter from "./routes/question.route";
-import authRouter from "./routes/authentication.route";
-import gameRouter from "./routes/game.route";
-import collectionRouter from "./routes/collection.route";
 import { errorHandlerMiddleware } from "./middlewares/errorHandler.middleware";
+import router from "./routes/index.route";
 
 const app = express();
 
@@ -29,12 +24,7 @@ app.use(
 */
 
 // Routes
-app.use("/api", userRouter);
-app.use("/api", authRouter);
-app.use("/api", questionRouter);
-app.use("/api", questionCategoryRouter);
-app.use("/api", gameRouter);
-app.use("/api", collectionRouter);
+app.use("/api", router);
 
 // Middleware Response
 app.use(errorHandlerMiddleware);

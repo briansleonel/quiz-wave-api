@@ -10,23 +10,19 @@ import { publicRoute } from "../middlewares/publicRoute.middleware";
 
 const questionRouter = Router();
 
-questionRouter.get("/questions", publicRoute, questionController.getAll);
+questionRouter.get("/", publicRoute, questionController.getAll);
 
-questionRouter.get(
-    "/questions/:id",
-    publicRoute,
-    questionController.getQuestion
-);
+questionRouter.get("/:id", publicRoute, questionController.getQuestion);
 
 questionRouter.post(
-    "/questions",
+    "/",
     authRequired,
     validateSchema(questionSchema),
     questionController.addQuestion
 );
 
 questionRouter.put(
-    "/questions/:id",
+    "/:id",
     authRequired,
     verifyIdParam,
     verifyRoleUserQuestion,
@@ -35,7 +31,7 @@ questionRouter.put(
 );
 
 questionRouter.delete(
-    "/questions/:id",
+    "/:id",
     authRequired,
     verifyIdParam,
     verifyRoleUserQuestion,
@@ -43,7 +39,7 @@ questionRouter.delete(
 );
 
 questionRouter.put(
-    "/questions/verified/:id",
+    "/verified/:id",
     authRequired,
     verifyRoleAdmin,
     questionController.changeVerified

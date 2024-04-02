@@ -3,7 +3,7 @@ import gameController from "../controllers/game.controller";
 
 const gameRouter = Router();
 
-gameRouter.get("/game/questions/:category/:limit?", gameController.playGame);
-gameRouter.get("/game/categories", gameController.getCategoriesGame);
+gameRouter.get("/questions/:category/:limit?", gameController.playGame);
+gameRouter.get("/categories", gameController.getCategoriesGame);
 
 export default gameRouter;

@@ -5,45 +5,35 @@ import { verifyRoleAdmin } from "../middlewares/validate-role/verifyRoleAdmin.mi
 
 const userRouter = Router();
 
-userRouter.get("/users", authRequired, verifyRoleAdmin, userController.getAll);
+userRouter.get("/", authRequired, verifyRoleAdmin, userController.getAll);
+
+userRouter.get("/:id", authRequired, verifyRoleAdmin, userController.getUser);
 
 userRouter.get(
-    "/users/:id",
-    authRequired,
-    verifyRoleAdmin,
-    userController.getUser
-);
-
-userRouter.get(
-    "/users/:id/questions",
+    "/:id/questions",
     authRequired,
     userController.getQuestionsFromUser
 );
 
 userRouter.get(
-    "/users/:id/collections",
+    "/:id/collections",
     authRequired,
     userController.getCollectionsFromUser
 );
 
-userRouter.post(
-    "/users",
-    authRequired,
-    verifyRoleAdmin,
-    userController.addUser
-);
+userRouter.post("/", authRequired, verifyRoleAdmin, userController.addUser);
 
 userRouter.put("/users/:id", authRequired, userController.updateUser);
 
 userRouter.delete(
-    "/users/:id",
+    "/:id",
     authRequired,
     verifyRoleAdmin,
     userController.deleteUser
 );
 
 userRouter.put(
-    "/users/verified/:id",
+    "/verified/:id",
     authRequired,
     verifyRoleAdmin,
     userController.changeVerifiedUser

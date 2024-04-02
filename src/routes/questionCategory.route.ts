@@ -7,18 +7,12 @@ import { verifyRoleAdmin } from "../middlewares/validate-role/verifyRoleAdmin.mi
 
 const questionCategoryRouter = Router();
 
-questionCategoryRouter.get(
-    "/categories",
-    questionCategoryController.getAllQuery
-);
+questionCategoryRouter.get("/", questionCategoryController.getAllQuery);
 
-questionCategoryRouter.get(
-    "/categories/:id",
-    questionCategoryController.getCategory
-);
+questionCategoryRouter.get("/:id", questionCategoryController.getCategory);
 
 questionCategoryRouter.post(
-    "/categories",
+    "/",
     authRequired,
     verifyRoleAdmin,
     validateSchema(categorySchema),
@@ -26,7 +20,7 @@ questionCategoryRouter.post(
 );
 
 questionCategoryRouter.put(
-    "/categories/:id",
+    "/:id",
     authRequired,
     verifyRoleAdmin,
     validateSchema(categorySchema),
@@ -34,7 +28,7 @@ questionCategoryRouter.put(
 );
 
 questionCategoryRouter.delete(
-    "/categories/:id",
+    "/:id",
     authRequired,
     verifyRoleAdmin,
     questionCategoryController.deleteCategory
