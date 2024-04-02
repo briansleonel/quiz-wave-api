@@ -1,5 +1,6 @@
 import { IQuestion } from "../types/question";
 import { IdParams, TypedRequest } from "../types/request";
+import { IUser } from "../types/user";
 
 interface Query {
     verified?: boolean;
@@ -16,7 +17,9 @@ interface Query {
  * @param req petición del cliente
  * @returns una query con los campos de búsqueda
  */
-export function getQueryQuestionOr(req: TypedRequest<IQuestion, IdParams>) {
+export function getQueryQuestionOr(
+    req: TypedRequest<IQuestion | IUser, IdParams>
+) {
     const or = [
         { question: { $regex: req.query.text || "", $options: "i" } },
         { description: { $regex: req.query.text || "", $options: "i" } },
