@@ -8,6 +8,7 @@ import { getOrderByRecents } from "../query/orderByRecents.query";
 import { getQueryCollectionOr } from "../query/collection.query";
 import collectionService from "../services/collection.service";
 import { BadRequestError } from "../libs/api.errors";
+import { Role } from "../enums/role.enum";
 
 const getCollection = async (
     req: TypedRequest<ICollectionDTO, IdParams>,
@@ -41,6 +42,10 @@ const getCollectionsQuery = async (
         page: req.query.page ? Number(req.query.page) : 1,
         limit: req.query.limit ? Number(req.query.limit) : 10,
     };
+
+    // Verifico el rol de usuario que realiza la consulta. Solo el admin podrá acceder a todos los recursos. El usuario común solo puede acceder a sus recursos
+    if (req.auth && req.auth.role === Role.PLAYER)
+        req.query.user = req.auth?.id;
 
     // Query para el filtrado de datos
     const query = getQueryCollectionOr(req);
@@ -98,7 +103,7 @@ const updateCollection = async (
     const { id } = req.params;
 
     if (!isValidId(id)) next(new BadRequestError("Id inválido"));
-    
+
     try {
         const collection = await collectionService.updateCollection(
             req.body,
