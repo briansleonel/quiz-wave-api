@@ -8,6 +8,10 @@ import { getQueryUserOr } from "../query/user.query";
 import { IUser } from "../types/user";
 import userService from "../services/user.service";
 import { BadRequestError } from "../libs/api.errors";
+import { getQueryQuestionOr } from "../query/question.query";
+import { getOrderByRecents } from "../query/orderByRecents.query";
+import questionService from "../services/question.service";
+import collectionService from "../services/collection.service";
 
 /**
  * Permite devolver un Usuario, de acuerdo a la coincidencia con algún ID
@@ -179,6 +183,74 @@ const deleteUser = async (
     }
 };
 
+const getQuestionsFromUser = async (
+    req: TypedRequest<IUser, IdParams>,
+    res: Response,
+    next: NextFunction
+) => {
+    const options = {
+        page: req.query.page ? Number(req.query.page) : 1,
+        limit: req.query.limit ? Number(req.query.limit) : 10,
+    };
+
+    req.query.user = req.params.id;
+
+    const query = getQueryQuestionOr(req);
+    const recents = getOrderByRecents(req);
+
+    try {
+        const { data, pagination } = await questionService.getByQuery(
+            query,
+            options,
+            recents
+        );
+
+        return apiResponse(res, {
+            status: StatusCodes.OK,
+            message:
+                pagination.totalData > 0 ? "Datos encontrados" : "Sin datos",
+            data,
+            pagination,
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
+const getCollectionsFromUser = async (
+    req: TypedRequest<IUser, IdParams>,
+    res: Response,
+    next: NextFunction
+) => {
+    const options = {
+        page: req.query.page ? Number(req.query.page) : 1,
+        limit: req.query.limit ? Number(req.query.limit) : 10,
+    };
+
+    req.query.user = req.params.id;
+
+    const query = getQueryQuestionOr(req);
+    const recents = getOrderByRecents(req);
+
+    try {
+        const { data, pagination } = await collectionService.getFilteredQuery(
+            query,
+            recents,
+            options
+        );
+
+        return apiResponse(res, {
+            status: StatusCodes.OK,
+            message:
+                pagination.totalData > 0 ? "Datos encontrados" : "Sin datos",
+            data,
+            pagination,
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
 const userController = {
     getAll,
     getUser,
@@ -186,6 +258,8 @@ const userController = {
     updateUser,
     deleteUser,
     changeVerifiedUser,
+    getQuestionsFromUser,
+    getCollectionsFromUser,
 };
 
 export default userController;
