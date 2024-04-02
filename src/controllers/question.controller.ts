@@ -57,7 +57,8 @@ const getAll = async (
     };
 
     // Verifico el rol de usuario que realiza la consulta. Solo el admin podrá acceder a todos los recursos. El usuario común solo puede acceder a sus recursos
-    if (req.auth!.role === Role.PLAYER) req.query.user = req.auth?.id;
+    if (req.auth && req.auth.role === Role.PLAYER)
+        req.query.user = req.auth?.id;
 
     const query = getQueryQuestionOr(req);
 

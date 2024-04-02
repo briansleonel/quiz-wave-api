@@ -6,13 +6,15 @@ import { questionSchema } from "../schemas/question.schema";
 import { verifyRoleUserQuestion } from "../middlewares/validate-role/verifyRoleUserQuestion.middleware";
 import { verifyRoleAdmin } from "../middlewares/validate-role/verifyRoleAdmin.middleware";
 import { verifyIdParam } from "../middlewares/verifyIdParam.middleware";
+import { publicRoute } from "../middlewares/publicRoute.middleware";
 
 const questionRouter = Router();
 
-questionRouter.get("/questions", questionController.getAll);
+questionRouter.get("/questions", publicRoute, questionController.getAll);
 
 questionRouter.get(
     "/questions/:id",
+    publicRoute,
     questionController.getQuestion
 );
 
