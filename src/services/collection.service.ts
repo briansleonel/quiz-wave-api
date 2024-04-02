@@ -44,9 +44,6 @@ async function getFilteredQuery(
 
 async function saveCollection(collection: ICollectionDTO) {
     try {
-        if (!isValidId(collection.user))
-            throw new BadRequestError("Id del usuario inválido");
-
         const collectionSaved = await collectionRepository.saveCollection(
             collection
         );
@@ -62,7 +59,7 @@ async function saveCollection(collection: ICollectionDTO) {
 
 async function updateCollection(collection: ICollectionDTO, id: string) {
     try {
-        if (!isValidId(collection.user))
+        if (collection.user && !isValidId(collection.user))
             throw new BadRequestError("Id del usuario inválido");
 
         const collectionUpdated = await collectionRepository.updateCollection(
