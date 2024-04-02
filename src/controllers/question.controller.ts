@@ -91,16 +91,11 @@ const addQuestion = async (
     res: Response,
     next: NextFunction
 ) => {
-    if (!req.body) next(new BadRequestError("No se proporcionaron datos"));
-
-    if (!isValidId(req.body.user))
-        next(new BadRequestError("Id de usuario inválido"));
-
-    if (!isValidId(req.body.category))
-        next(new BadRequestError("Id de categoría inválido"));
+    const payload = req.body;
+    payload.user = req.auth!.id; // asigno el ID del usuario que se almacena en el token
 
     try {
-        const question = await questionService.saveQuestion(req.body);
+        const question = await questionService.saveQuestion(payload);
 
         return apiResponse(res, {
             status: StatusCodes.OK,
@@ -127,14 +122,6 @@ const updateQuestion = async (
     const { id } = req.params;
 
     if (!isValidId(id)) next(new BadRequestError("Id inválido"));
-
-    if (!req.body) next(new BadRequestError("No se proporcionaron datos"));
-
-    if (!isValidId(req.body.user))
-        next(new BadRequestError("Id de usuario inválido"));
-
-    if (!isValidId(req.body.category))
-        next(new BadRequestError("Id de categoría inválido"));
 
     try {
         const question = await questionService.updateQuestion(req.body, id);

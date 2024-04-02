@@ -73,9 +73,12 @@ const addCollection = async (
 ) => {
     if (!req.body) next(new BadRequestError("No se proporcionaron datos"));
 
+    const payload = req.body;
+    payload.user = req.auth!.id; // asigno el ID del usuario que se almacena en el token
+
     try {
         // guardo la instancia en la BD
-        const collection = await collectionService.saveCollection(req.body);
+        const collection = await collectionService.saveCollection(payload);
 
         return apiResponse(res, {
             status: StatusCodes.OK,
@@ -95,7 +98,7 @@ const updateCollection = async (
     const { id } = req.params;
 
     if (!isValidId(id)) next(new BadRequestError("Id inválido"));
-
+    
     try {
         const collection = await collectionService.updateCollection(
             req.body,
