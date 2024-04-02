@@ -9,11 +9,10 @@ import { verifyIdParam } from "../middlewares/verifyIdParam.middleware";
 
 const questionRouter = Router();
 
-questionRouter.get("/questions", authRequired, questionController.getAll);
+questionRouter.get("/questions", questionController.getAll);
 
 questionRouter.get(
     "/questions/:id",
-    authRequired,
     questionController.getQuestion
 );
 

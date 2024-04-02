@@ -1,7 +1,7 @@
 import { IdParams, TypedRequest } from "../../types/request";
 import { getUserDataToken } from "../../libs/jwt";
 import { UserPayload } from "../../types/payload";
-import { Role } from "../../libs/role.enum";
+import { Role } from "../../enums/role.enum";
 import { BadRequestError } from "../../libs/api.errors";
 import { NextFunction, Response } from "express";
 

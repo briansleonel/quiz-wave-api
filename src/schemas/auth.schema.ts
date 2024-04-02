@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { Role } from "../libs/role.enum";
+import { Role } from "../enums/role.enum";
 
 /**
  * Error personalizado para un error de Zod

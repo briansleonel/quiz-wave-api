@@ -1,6 +1,6 @@
 import { Document, PaginateModel, Schema, model } from "mongoose";
 import { isEmail } from "../libs/emailValidator";
-import { Role } from "../libs/role.enum";
+import { Role } from "../enums/role.enum";
 import paginate from "mongoose-paginate-v2";
 import { IUser } from "../types/user";
 

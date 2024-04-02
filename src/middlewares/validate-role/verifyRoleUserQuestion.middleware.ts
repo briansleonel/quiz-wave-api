@@ -1,6 +1,6 @@
 import { NextFunction, Response } from "express";
 import { IdParams, TypedRequest } from "../../types/request";
-import { Role } from "../../libs/role.enum";
+import { Role } from "../../enums/role.enum";
 import questionRepository from "../../repositories/question.repository";
 import { getUserDataToken } from "../../libs/jwt";
 import { UserPayload } from "../../types/payload";

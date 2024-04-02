@@ -1,5 +1,5 @@
 import { Types } from "mongoose";
-import { Role } from "../libs/role.enum";
+import { Role } from "../enums/role.enum";
 
 /**
  * Representa un usua

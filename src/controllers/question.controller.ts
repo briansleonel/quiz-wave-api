@@ -8,6 +8,7 @@ import { IQuestion, IQuestionDTO } from "../types/question";
 import { getOrderByRecents } from "../query/orderByRecents.query";
 import { BadRequestError } from "../libs/api.errors";
 import questionService from "../services/question.service";
+import { Role } from "../enums/role.enum";
 
 /**
  * Permite devolver una Pregunta, de acuerdo a la coincidencia con algún ID
@@ -54,6 +55,9 @@ const getAll = async (
         page: req.query.page ? Number(req.query.page) : 1,
         limit: req.query.limit ? Number(req.query.limit) : 10,
     };
+
+    // Verifico el rol de usuario que realiza la consulta. Solo el admin podrá acceder a todos los recursos. El usuario común solo puede acceder a sus recursos
+    if (req.auth!.role === Role.PLAYER) req.query.user = req.auth?.id;
 
     const query = getQueryQuestionOr(req);
 

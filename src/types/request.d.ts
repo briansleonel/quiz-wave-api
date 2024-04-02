@@ -1,6 +1,6 @@
 import { Request } from "express";
 import { Types } from "mongoose";
-import { Role } from "../libs/role.enum";
+import { Role } from "../enums/role.enum";
 import { IUserRequest } from "../interfaces/user";
 import { UserPayload } from "./payload";
 

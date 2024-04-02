@@ -3,7 +3,7 @@ import { IdParams, TypedRequest } from "../../types/request";
 import { getUserDataToken } from "../../libs/jwt";
 import { UserPayload } from "../../types/payload";
 import collectionRepository from "../../repositories/collection.repository";
-import { Role } from "../../libs/role.enum";
+import { Role } from "../../enums/role.enum";
 import { UnauthorizedError } from "../../libs/api.errors";
 
 /**
