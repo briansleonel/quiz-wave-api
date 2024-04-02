@@ -16,7 +16,8 @@ export const collectionSchema = z.object({
             required_error: "El ID de usuario es requerido",
             invalid_type_error: "El usuario debe ser un texto",
         })
-        .refine(isValidId, { message: "ID de usuario no válido" }),
+        .refine(isValidId, { message: "ID de usuario no válido" })
+        .optional(),
     questions: z
         .array(
             z.object({
