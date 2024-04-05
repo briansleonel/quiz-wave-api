@@ -28,7 +28,7 @@ export function verifyRoleAdmin<T>(
             return next();
         }
 
-        throw new BadRequestError("Acción no permitida");
+        next(new BadRequestError("Unauthorized user"));
     } catch (error) {
         throw error;
     }
