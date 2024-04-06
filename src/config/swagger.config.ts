@@ -10,12 +10,6 @@ export const swaggerOptions: Options = {
         },
     },
     apis: ["./src/routes/*.route.ts"],
-    customCssUrl:
-        "https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/5.13.0/swagger-ui.min.css",
-    customJs: [
-        "https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/5.13.0/swagger-ui-bundle.min.js",
-        "https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/5.13.0/swagger-ui-standalone-preset.min.js",
-    ],
 };
 
 export const swaggerSpec = swaggerJSDoc(swaggerOptions);
