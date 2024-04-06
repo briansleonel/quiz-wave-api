@@ -30,5 +30,5 @@ app.use("/api", index_route_1.default);
 // Middleware Response
 app.use(errorHandler_middleware_1.errorHandlerMiddleware);
 // Swagger
-app.use("/api/docs", swagger_ui_express_1.default.serve, swagger_ui_express_1.default.setup(swagger_config_1.swaggerSpec));
+app.use("/api/docs", express_1.default.static("node_modules/swagger-ui-dist/", { index: false }), swagger_ui_express_1.default.serve, swagger_ui_express_1.default.setup(swagger_config_1.swaggerSpec));
 exports.default = app;
