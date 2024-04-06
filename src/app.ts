@@ -32,15 +32,6 @@ app.use("/api", router);
 app.use(errorHandlerMiddleware);
 
 // Swagger
-app.use(
-    "/api/docs",
-    swaggerUI.serve,
-    swaggerUI.setup(swaggerSpec, {
-        customCssUrl:
-            "https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/5.13.0/swagger-ui.min.css",
-        customJs:
-            "https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/5.13.0/swagger-ui-bundle.min.js",
-    })
-);
+app.use("/api/docs", swaggerUI.serve, swaggerUI.setup(swaggerSpec));
 
 export default app;

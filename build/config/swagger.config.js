@@ -15,5 +15,10 @@ exports.swaggerOptions = {
         },
     },
     apis: ["./src/routes/*.route.ts"],
+    customCssUrl: "https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/5.13.0/swagger-ui.min.css",
+    customJs: [
+        "https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/5.13.0/swagger-ui-bundle.min.js",
+        "https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/5.13.0/swagger-ui-standalone-preset.min.js",
+    ],
 };
 exports.swaggerSpec = (0, swagger_jsdoc_1.default)(exports.swaggerOptions);
