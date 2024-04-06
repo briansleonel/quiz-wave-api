@@ -43,7 +43,7 @@ app.use(
         customCssUrl:
             "https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/5.13.0/swagger-ui.min.css",
         customJs:
-            "https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/5.13.0/swagger-ui.min.js",
+            "['https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/5.13.0/swagger-ui-standalone-preset.min.js', 'https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/5.13.0/swagger-ui-bundle.min.js']",
     })
 );
 
