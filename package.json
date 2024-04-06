@@ -7,8 +7,16 @@
         "dev": "ts-node-dev src/index.ts",
         "start": "node ./build/index.js",
         "tsc": "tsc",
-        "test": "echo \"Error: no test specified\" && exit 1"
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "build": "rimraf dist && tsc",
+        "ts.check": "tsc --project tsconfig.json",
+        "add-build": "git add dist"
     },
+    "pre-commit": [
+        "ts.check",
+        "build",
+        "add-build"
+    ],
     "keywords": [],
     "author": "",
     "license": "ISC",
