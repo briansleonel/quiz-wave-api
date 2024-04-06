@@ -3,7 +3,6 @@ import morgan from "morgan";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import swaggerUI from "swagger-ui-express";
-import swaggerUIDist from "swagger-ui-dist";
 
 import { errorHandlerMiddleware } from "./middlewares/errorHandler.middleware";
 import router from "./routes/index.route";
@@ -16,8 +15,6 @@ app.use(express.json()); // Permitir la conversion del req.body en un objeto de 
 app.use(morgan("dev")); // Hacemos uso del HTTP Request Logger con la configuración dev
 app.use(cookieParser()); // Permitir req.cookies se transofrmen a onjeto de js
 app.use(cors()); // Uso de cors
-
-app.use(express.static(swaggerUIDist.absolutePath()));
 
 /*
 app.use(
@@ -35,6 +32,15 @@ app.use("/api", router);
 app.use(errorHandlerMiddleware);
 
 // Swagger
-app.use("/api/docs", swaggerUI.serve, swaggerUI.setup(swaggerSpec));
+app.use(
+    "/api/docs",
+    swaggerUI.serve,
+    swaggerUI.setup(swaggerSpec, {
+        customCssUrl:
+            "https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/5.13.0/swagger-ui.min.css",
+        customJs:
+            "https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/5.13.0/swagger-ui-bundle.min.js",
+    })
+);
 
 export default app;
