@@ -8,7 +8,7 @@ import swaggerUiDist from "swagger-ui-dist";
 
 import { errorHandlerMiddleware } from "./middlewares/errorHandler.middleware";
 import router from "./routes/index.route";
-import { swaggerSpec } from "./config/swagger.config";
+import { swaggerCustom, swaggerSpec } from "./config/swagger.config";
 
 const app = express();
 
@@ -39,12 +39,7 @@ app.use(errorHandlerMiddleware);
 app.use(
     "/api/docs",
     swaggerUI.serve,
-    swaggerUI.setup(swaggerSpec, {
-        customCssUrl:
-            "https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/5.13.0/swagger-ui.min.css",
-        customJs:
-            "['https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/5.13.0/swagger-ui-standalone-preset.min.js', 'https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/5.13.0/swagger-ui-bundle.min.js']",
-    })
+    swaggerUI.setup(swaggerSpec, swaggerCustom)
 );
 
 export default app;
