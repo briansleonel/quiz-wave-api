@@ -18,7 +18,10 @@ exports.swaggerOptions = {
 };
 exports.swaggerCustom = {
     customCssUrl: "https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/5.13.0/swagger-ui.min.css",
-    customJs: "https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/5.13.0/swagger-ui-bundle.js",
+    customJs: [
+        "https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/5.13.0/swagger-ui-bundle.js",
+        "https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/5.13.0/swagger-ui-standalone-preset.js",
+    ],
     customFavIcon: "https://avatars.githubusercontent.com/u/13707038?s=200&v=4",
 };
 exports.swaggerSpec = (0, swagger_jsdoc_1.default)(exports.swaggerOptions);
